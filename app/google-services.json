@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "249537813406",
+    "project_id": "lazy-reader-b3a2e",
+    "storage_bucket": "lazy-reader-b3a2e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:249537813406:android:c3545ba1d097af47ba948f",
+        "android_client_info": {
+          "package_name": "com.bishal.lazyreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "249537813406-lbeu2sfr0gpabocarse9133gi0fbhog7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTCsmYG1UywRz3xRzqbUy7qV-LvYP19Kk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "249537813406-lbeu2sfr0gpabocarse9133gi0fbhog7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
