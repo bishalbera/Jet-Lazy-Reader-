@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bishal.lazyreader.components.EmailInput
+import com.bishal.lazyreader.components.PasswordInput
 import com.bishal.lazyreader.screens.splash.ReaderLogo
 
 @Composable
@@ -37,7 +38,7 @@ Surface(modifier = Modifier.fillMaxSize()) {
         
         Spacer(modifier = Modifier.height(height = 25.dp))
 
-        UserForm()
+        UserForm(loading = false, isCreateAccount = false){ email, password ->}
 
     }
 
@@ -45,7 +46,11 @@ Surface(modifier = Modifier.fillMaxSize()) {
 }
 
 @Composable
-fun UserForm(){
+fun UserForm(
+    loading: Boolean = false,
+    isCreateAccount: Boolean = false,
+    onDone: (String, String) -> Unit = {email, pwd ->}
+){
     val email = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
     val passwordVisibility = rememberSaveable { mutableStateOf(false) }
@@ -63,9 +68,21 @@ fun UserForm(){
     
     Column(modifier,
     horizontalAlignment = Alignment.CenterHorizontally) {
-        EmailInput(emailState = email, enabled = true, onAction = KeyboardActions{
+        EmailInput(emailState = email, enabled = !loading, onAction = KeyboardActions{
             passwordFocusRequest.requestFocus()
         })
+
+        PasswordInput(
+            modifier = Modifier,
+            passwordState = password,
+            labelId = "Password",
+            enabled = !loading,
+            passwordVisibility = passwordVisibility,
+            onAction = KeyboardActions{
+                if (!valid) return@KeyboardActions
+                onDone(email.value.trim(), password.value.trim())
+            }
+        )
     }
 
 
