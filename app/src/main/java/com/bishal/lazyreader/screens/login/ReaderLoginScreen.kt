@@ -2,17 +2,25 @@
 
 package com.bishal.lazyreader.screens.login
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +46,8 @@ Surface(modifier = Modifier.fillMaxSize()) {
         
         Spacer(modifier = Modifier.height(height = 25.dp))
 
-        UserForm(loading = false, isCreateAccount = false){ email, password ->}
+        UserForm(loading = false, isCreateAccount = false){email, password ->}
+
 
     }
 
@@ -81,9 +90,35 @@ fun UserForm(
             onAction = KeyboardActions{
                 if (!valid) return@KeyboardActions
                 onDone(email.value.trim(), password.value.trim())
-            }
-        )
+            })
+
+        SubmitButton(
+            textID = if (isCreateAccount) "Create Account" else "Login",
+            loading = loading,
+            validInputs = valid,
+        ){
+            onDone(email.value.trim(), password.value.trim())
+        }
     }
 
+
+}
+
+@Composable
+fun SubmitButton(textID: String,
+                 loading: Boolean,
+                 validInputs: Boolean,
+                 onClick: () -> Unit) {
+    Button(onClick =  onClick,
+           modifier = Modifier
+               .padding(3.dp)
+               .fillMaxWidth(),
+            enabled = !loading && validInputs,
+            shape = CircleShape) {
+        if (loading) CircularProgressIndicator(modifier = Modifier.size(25.dp))
+        else Text(text = textID, modifier = Modifier.padding(5.dp))
+
+
+    }
 
 }
