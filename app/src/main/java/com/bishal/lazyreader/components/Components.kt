@@ -4,6 +4,7 @@ package com.bishal.lazyreader.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -164,9 +165,10 @@ fun ReaderAppBar(
                       }
                   }) {
                       if (showProfile) Row() {
-                          Icon(imageVector = Icons.Filled.Logout, contentDescription = )
+                          Icon(imageVector = Icons.Filled.Logout, contentDescription = "logout",)
+
                           
-                      }
+                      }else Box {}
                       
                       
                   }

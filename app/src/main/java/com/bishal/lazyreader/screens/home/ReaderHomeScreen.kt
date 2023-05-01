@@ -12,13 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.bishal.lazyreader.components.FABContent
+import com.bishal.lazyreader.components.ReaderAppBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ReaderHomeScreen(navController: NavController){
     
 
-    Scaffold(topBar = {},
+    Scaffold(topBar = {
+                      ReaderAppBar(title = "Lazy Reader", navController = navController)
+    },
         floatingActionButton = {
             FABContent{
                 
