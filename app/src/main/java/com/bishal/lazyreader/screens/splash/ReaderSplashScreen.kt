@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.bishal.lazyreader.navigation.ReaderScreen
 import kotlinx.coroutines.delay
 
 @Composable
@@ -41,6 +42,7 @@ fun ReaderSplashScreen(navController: NavController){
                         .getInterpolation(it)
                 }))
         delay(2000L)
+        navController.navigate(ReaderScreen.LoginScreen.name)
     }
 
 
