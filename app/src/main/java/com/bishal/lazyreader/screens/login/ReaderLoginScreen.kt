@@ -39,11 +39,14 @@ import androidx.navigation.NavController
 import com.bishal.lazyreader.R
 import com.bishal.lazyreader.components.EmailInput
 import com.bishal.lazyreader.components.PasswordInput
+import com.bishal.lazyreader.navigation.ReaderScreen
 import com.bishal.lazyreader.screens.splash.ReaderLogo
 import javax.security.auth.login.LoginException
 
 @Composable
-fun ReaderLoginScreen(navController: NavController){
+fun ReaderLoginScreen(navController: NavController,
+
+                      viewModel: LoginScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()){
     val showLoginForm = rememberSaveable { mutableStateOf(true) }
 
 Surface(modifier = Modifier.fillMaxSize()) {
@@ -52,10 +55,15 @@ Surface(modifier = Modifier.fillMaxSize()) {
         ReaderLogo()
         if (showLoginForm.value) UserForm(loading = false, isCreateAccount = false){email, password ->
             //TODO: create FB login
+            viewModel.signInWithEmailAndPassword( email, password){
+                navController.navigate(ReaderScreen.ReaderHomeScreen.name)
+            }
         }
         else{
             UserForm(loading = false, isCreateAccount = true){ email, password ->
-                //TODO: create FB account
+                viewModel.createUserWithEmailAndPassword(email, password) {
+                    navController.navigate(ReaderScreen.ReaderHomeScreen.name)
+                }
             }
         }
 

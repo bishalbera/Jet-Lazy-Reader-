@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bishal.lazyreader.navigation.ReaderScreen
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
@@ -42,7 +43,12 @@ fun ReaderSplashScreen(navController: NavController){
                         .getInterpolation(it)
                 }))
         delay(2000L)
-        navController.navigate(ReaderScreen.LoginScreen.name)
+        if (FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
+            navController.navigate(ReaderScreen.LoginScreen.name)
+        }else{
+            navController.navigate(ReaderScreen.ReaderHomeScreen.name)
+        }
+
     }
 
 
