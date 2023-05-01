@@ -2,27 +2,49 @@
 
 package com.bishal.lazyreader.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.bishal.lazyreader.navigation.ReaderScreen
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun EmailInput(
@@ -104,6 +126,69 @@ fun PasswordVisibility(passwordVisibility: MutableState<Boolean>){
 
     }
 
+}
+
+@Composable
+fun ReaderAppBar(
+    title: String,
+    icon: ImageVector? = null,
+    showProfile: Boolean = true,
+    navController: NavController,
+    onBackArrowClicked:() -> Unit = {}
+){
+    TopAppBar(
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (showProfile) {
+                    Icon(imageVector = Icons.Default.Favorite, contentDescription = "logo",
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .scale(0.9f)
+                        )
+                }
+                if (icon !=null) {
+                    Icon(imageVector = icon, contentDescription = "arrowback",
+                        tint = Color.Red.copy(alpha = 0.7f),
+                        modifier = Modifier.clickable { onBackArrowClicked.invoke() })
+                }
+                Spacer(modifier = Modifier.width(40.dp))
+                Text(text = title,
+                    color = Color.Red.copy(alpha = 0.7f),
+                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+            }
+        },
+        actions = {
+                  IconButton(onClick = { FirebaseAuth.getInstance()
+                      .signOut().run { 
+                          navController.navigate(ReaderScreen.LoginScreen.name)
+                      }
+                  }) {
+                      if (showProfile) Row() {
+                          Icon(imageVector = Icons.Filled.Logout, contentDescription = )
+                          
+                      }
+                      
+                      
+                  }
+        },
+        modifier = Modifier.background(Color.Transparent),
+
+
+        )
+        
+
+    
+}
+
+@Composable
+fun FABContent(onTap: () -> Unit) {
+    FloatingActionButton(onClick = { onTap() },
+        shape = RoundedCornerShape(50.dp),
+        containerColor = Color(0xFF92CBDF)) {
+        Icon(imageVector = Icons.Default.Add, contentDescription = "add a book",
+            tint = Color.White)
+
+    }
 }
 
 
