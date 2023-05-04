@@ -271,12 +271,12 @@ fun ListCard(book: MBook,
                     BookRating(score = 4.5)               }
 
             }
-            Text(text = "title", modifier = Modifier.padding(4.dp),
+            Text(text = book.title.toString(), modifier = Modifier.padding(4.dp),
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis)
 
-            Text(text = "author", modifier = Modifier.padding(4.dp),
+            Text(text = book.authors.toString(), modifier = Modifier.padding(4.dp),
                 style = MaterialTheme.typography.titleSmall) }
 
 //        val isStartedReading = remember {

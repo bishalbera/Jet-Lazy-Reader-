@@ -5,6 +5,7 @@
 package com.bishal.lazyreader.screens.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +56,7 @@ fun ReaderHomeScreen(navController: NavController){
     },
         floatingActionButton = {
             FABContent{
+                navController.navigate(ReaderScreen.SearchScreen.name)
             }
         }) {
         Surface(modifier = Modifier.fillMaxSize()) {
@@ -83,7 +85,7 @@ fun HomeContent(navController: NavController) {
         MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
         MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
         MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
-        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null)
+        MBook(id = "sdjhk", title = "oull", authors = "gakhskj", notes = null)
     )
 
     val email = FirebaseAuth.getInstance().currentUser?.email
@@ -143,6 +145,7 @@ fun HomeContent(navController: NavController) {
 fun BookListArea(listOfBooks: List<MBook>,
                  navController: NavController) {
     HorizontalScrollableComponent(listOfBooks){
+        Log.d("TAG", "Booklistarea: $it")
         //TODO: on card clicked navigate to details screen
     }
 
