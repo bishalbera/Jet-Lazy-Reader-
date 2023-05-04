@@ -205,7 +205,7 @@ fun TitleSection(modifier: Modifier = Modifier,
         Column {
             Text(text = label,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Left)
 
         }
