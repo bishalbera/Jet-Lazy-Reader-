@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.bishal.lazyreader.components.FABContent
 import com.bishal.lazyreader.components.ReaderAppBar
+import com.bishal.lazyreader.model.MBook
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -26,16 +27,31 @@ fun ReaderHomeScreen(navController: NavController){
     },
         floatingActionButton = {
             FABContent{
-                
             }
-
-    }) {
+        }) {
         Surface(modifier = Modifier.fillMaxSize()) {
+            //home content
+            HomeContent()
 
         }
 
 
     }
+
+
+
+
+
+    @Composable
+    fun ReadingRightNowArea(listOfBooks: List<MBook>,
+                            navController: NavController) {
+
+    }
+}
+
+@Composable
+fun HomeContent() {
+
 }
 
 
