@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.bishal.lazyreader.screens.home.ReaderHomeScreen
 import com.bishal.lazyreader.screens.login.ReaderLoginScreen
 import com.bishal.lazyreader.screens.splash.ReaderSplashScreen
+import com.bishal.lazyreader.screens.stats.ReaderStatsScreen
 
 @Composable
 fun ReaderNavigation(){
@@ -21,6 +22,9 @@ val navController = rememberNavController()
         }
         composable(ReaderScreen.ReaderHomeScreen.name){
             ReaderHomeScreen(navController = navController)
+        }
+        composable(ReaderScreen.ReaderStatsScreen.name){
+            ReaderStatsScreen(navController = navController)
         }
     }
 }

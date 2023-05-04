@@ -1,5 +1,5 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class
 )
 
 package com.bishal.lazyreader.screens.home
@@ -36,6 +36,7 @@ import com.bishal.lazyreader.components.FABContent
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.components.TitleSection
 import com.bishal.lazyreader.model.MBook
+import com.bishal.lazyreader.navigation.ReaderScreen
 import com.google.firebase.auth.FirebaseAuth
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -88,7 +89,9 @@ fun HomeContent(navController: NavController) {
                 Icon(imageVector = Icons.Filled.AccountCircle,
                     contentDescription = "Profile",
                     modifier = Modifier
-                        .clickable { }
+                        .clickable {
+                            navController.navigate(ReaderScreen.ReaderStatsScreen.name)
+                        }
                         .size(45.dp),
                     tint = MaterialTheme.colorScheme.secondaryContainer)
                 Text(text = currentUserName!!,
