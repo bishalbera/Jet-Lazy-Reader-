@@ -6,16 +6,19 @@ package com.bishal.lazyreader.screens.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Divider
@@ -73,14 +76,25 @@ fun ReaderHomeScreen(navController: NavController){
 @Composable
 fun HomeContent(navController: NavController) {
 
+
+
+    val listOfBooks = listOf(
+        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
+        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
+        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
+        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
+        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null)
+    )
+
     val email = FirebaseAuth.getInstance().currentUser?.email
     val currentUserName = if (!email.isNullOrEmpty())
         email
             ?.split("@")?.get(0)
     else "NA"
     Column(
-        Modifier.padding(2.dp),
-        verticalArrangement = Arrangement.SpaceAround
+        Modifier.padding(top = 65.dp),
+        verticalArrangement = Arrangement.Top
+
     ) {
         Row(modifier = Modifier.align(alignment = Alignment.Start)) {
             TitleSection(label = "Currently Reading")
@@ -115,7 +129,7 @@ fun HomeContent(navController: NavController) {
 
         TitleSection(label = "Reading List")
 
-        BookListArea(listOfBooks = emptyList<MBook>(), navController = navController)
+        BookListArea(listOfBooks = listOfBooks, navController = navController)
 
 
        
@@ -128,18 +142,31 @@ fun HomeContent(navController: NavController) {
 @Composable
 fun BookListArea(listOfBooks: List<MBook>,
                  navController: NavController) {
-    HorizontalScrollableComponent(listOfBooks)
+    HorizontalScrollableComponent(listOfBooks){
+        //TODO: on card clicked navigate to details screen
+    }
 
 
 
 }
 
 @Composable
-fun HorizontalScrollableComponent(listOfBooks: List<MBook>) {
+fun HorizontalScrollableComponent(listOfBooks: List<MBook>,
+                                onCardPressed: (String) -> Unit) {
     val scrollState = rememberScrollState()
     
-    Row(modifier = ) {
-        
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .heightIn(280.dp)
+        .horizontalScroll(scrollState)) {
+
+        for (book in listOfBooks) {
+            ListCard(book = MBook()) {
+             onCardPressed(it)
+
+            }
+        }
+
     }
 }
 
