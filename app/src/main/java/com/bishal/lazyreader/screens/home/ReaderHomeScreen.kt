@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Divider
@@ -33,7 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bishal.lazyreader.components.FABContent
+import com.bishal.lazyreader.components.ListCard
 import com.bishal.lazyreader.components.ReaderAppBar
+import com.bishal.lazyreader.components.RoundedButton
 import com.bishal.lazyreader.components.TitleSection
 import com.bishal.lazyreader.model.MBook
 import com.bishal.lazyreader.navigation.ReaderScreen
@@ -64,27 +67,25 @@ fun ReaderHomeScreen(navController: NavController){
 
 
 
-    @Composable
-    fun ReadingRightNowArea(listOfBooks: List<MBook>,
-                            navController: NavController) {
-
-    }
+    
 }
 
 @Composable
 fun HomeContent(navController: NavController) {
 
     val email = FirebaseAuth.getInstance().currentUser?.email
-    val currentUserName = if(!email.isNullOrEmpty())
+    val currentUserName = if (!email.isNullOrEmpty())
         email
             ?.split("@")?.get(0)
     else "NA"
-    Column(Modifier.padding(2.dp),
-        verticalArrangement = Arrangement.SpaceEvenly) {
+    Column(
+        Modifier.padding(2.dp),
+        verticalArrangement = Arrangement.SpaceAround
+    ) {
         Row(modifier = Modifier.align(alignment = Alignment.Start)) {
             TitleSection(label = "Currently Reading")
             Spacer(modifier = Modifier.fillMaxWidth(0.7f))
-            
+
             Column {
                 Icon(imageVector = Icons.Filled.AccountCircle,
                     contentDescription = "Profile",
@@ -94,7 +95,8 @@ fun HomeContent(navController: NavController) {
                         }
                         .size(45.dp),
                     tint = MaterialTheme.colorScheme.secondaryContainer)
-                Text(text = currentUserName!!,
+                Text(
+                    text = currentUserName!!,
                     modifier = Modifier.padding(2.dp),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Red,
@@ -102,16 +104,49 @@ fun HomeContent(navController: NavController) {
                     maxLines = 1,
                     overflow = TextOverflow.Clip)
                 Divider()
-                
+
+
             }
 
 
         }
+        ReadingRightNowArea(listOfBooks = listOf(),
+            navController = navController)
+
+        TitleSection(label = "Reading List")
+
+        BookListArea(listOfBooks = emptyList<MBook>(), navController = navController)
+
+
+       
 
 
     }
 
+}
+
+@Composable
+fun BookListArea(listOfBooks: List<MBook>,
+                 navController: NavController) {
+    HorizontalScrollableComponent(listOfBooks)
+
+
 
 }
 
+@Composable
+fun HorizontalScrollableComponent(listOfBooks: List<MBook>) {
+    val scrollState = rememberScrollState()
+    
+    Row(modifier = ) {
+        
+    }
+}
 
+
+@Composable
+fun ReadingRightNowArea(listOfBooks: List<MBook>,
+                        navController: NavController) {
+    ListCard(book = MBook())
+
+}
