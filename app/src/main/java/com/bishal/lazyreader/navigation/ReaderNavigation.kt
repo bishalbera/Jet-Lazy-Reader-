@@ -1,9 +1,12 @@
 package com.bishal.lazyreader.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.bishal.lazyreader.screens.details.ReaderDetailsScreen
 import com.bishal.lazyreader.screens.home.ReaderHomeScreen
 import com.bishal.lazyreader.screens.login.ReaderLoginScreen
 import com.bishal.lazyreader.screens.search.ReaderSearchScreen
@@ -29,6 +32,16 @@ val navController = rememberNavController()
         }
         composable(ReaderScreen.SearchScreen.name){
             ReaderSearchScreen(navController = navController)
+        }
+
+        val detailName = ReaderScreen.DetailScreen.name
+        composable("$detailName/{bookId}", arguments = listOf(navArgument("bookId"){
+            type = NavType.StringType
+        })) {backStackEntry ->
+        backStackEntry.arguments?.getString("bookId").let {
+            ReaderDetailsScreen(navController = navController, bookId = it.toString())
+        }
+
         }
     }
 }
