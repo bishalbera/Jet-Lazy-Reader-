@@ -2,7 +2,7 @@ package com.bishal.lazyreader.navigation
 
 enum class ReaderScreen {
 
-    SplashScreen,
+    LottieScreen,
     LoginScreen,
     CreateAccountScreen,
     ReaderHomeScreen,
@@ -14,7 +14,7 @@ enum class ReaderScreen {
     companion object {
         fun fromRoute(route: String?): ReaderScreen
                 = when(route?.substringBefore("/")) {
-            SplashScreen.name -> SplashScreen
+            LottieScreen.name -> LottieScreen
             LoginScreen.name -> LoginScreen
             CreateAccountScreen.name -> CreateAccountScreen
             ReaderHomeScreen.name -> ReaderHomeScreen

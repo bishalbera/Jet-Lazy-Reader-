@@ -2,7 +2,6 @@
 
 package com.bishal.lazyreader.screens.login
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,8 +39,7 @@ import com.bishal.lazyreader.R
 import com.bishal.lazyreader.components.EmailInput
 import com.bishal.lazyreader.components.PasswordInput
 import com.bishal.lazyreader.navigation.ReaderScreen
-import com.bishal.lazyreader.screens.splash.ReaderLogo
-import javax.security.auth.login.LoginException
+import com.bishal.lazyreader.screens.lottie.ReaderLogo
 
 @Composable
 fun ReaderLoginScreen(navController: NavController,
