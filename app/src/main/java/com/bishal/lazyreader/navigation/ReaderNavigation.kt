@@ -1,6 +1,10 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.bishal.lazyreader.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,6 +15,7 @@ import com.bishal.lazyreader.screens.home.ReaderHomeScreen
 import com.bishal.lazyreader.screens.login.ReaderLoginScreen
 import com.bishal.lazyreader.screens.search.ReaderSearchScreen
 import com.bishal.lazyreader.screens.lottie.ReaderLottieScreen
+import com.bishal.lazyreader.screens.search.ReaderSearchScreenViewModel
 import com.bishal.lazyreader.screens.stats.ReaderStatsScreen
 
 @Composable
@@ -31,7 +36,8 @@ val navController = rememberNavController()
             ReaderStatsScreen(navController = navController)
         }
         composable(ReaderScreen.SearchScreen.name){
-            ReaderSearchScreen(navController = navController)
+            val searchViewModel = hiltViewModel<ReaderSearchScreenViewModel>()
+            ReaderSearchScreen(navController = navController, viewModel = searchViewModel)
         }
 
         val detailName = ReaderScreen.DetailScreen.name
