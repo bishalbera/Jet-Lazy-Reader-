@@ -27,7 +27,7 @@ class ReaderSearchScreenViewModel @Inject constructor(private val repository: Bo
         loadBooks()
     }
 
-     fun loadBooks() {
+     private fun loadBooks() {
         searchBooks("money")
     }
 
