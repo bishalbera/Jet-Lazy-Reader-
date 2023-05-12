@@ -20,9 +20,9 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideBookRepository(api: BooksApi)
-            = BookRepository(api)
-
+    fun provideFireBookRepository()
+            = FireRepository(queryBook = FirebaseFirestore.getInstance()
+        .collection("books"))
 
     @Singleton
     @Provides

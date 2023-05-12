@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
     ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class
 )
 
@@ -17,14 +18,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -33,14 +33,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.bishal.lazyreader.components.FABContent
 import com.bishal.lazyreader.components.ListCard
 import com.bishal.lazyreader.components.ReaderAppBar
-import com.bishal.lazyreader.components.RoundedButton
 import com.bishal.lazyreader.components.TitleSection
 import com.bishal.lazyreader.model.MBook
 import com.bishal.lazyreader.navigation.ReaderScreen
@@ -48,7 +50,8 @@ import com.google.firebase.auth.FirebaseAuth
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ReaderHomeScreen(navController: NavController){
+fun ReaderHomeScreen(navController: NavController,
+                     viewModel: HomeScreenViewModel = hiltViewModel()){
     
 
     Scaffold(topBar = {
@@ -61,7 +64,7 @@ fun ReaderHomeScreen(navController: NavController){
         }) {
         Surface(modifier = Modifier.fillMaxSize()) {
             //home content
-            HomeContent(navController)
+            HomeContent(navController, viewModel)
 
         }
 
@@ -76,22 +79,26 @@ fun ReaderHomeScreen(navController: NavController){
 }
 
 @Composable
-fun HomeContent(navController: NavController) {
+fun HomeContent(navController: NavController,
+                viewModel: HomeScreenViewModel) {
+    var listOfBooks = listOf<MBook>()
+    val currentUser = FirebaseAuth.getInstance().currentUser
+
+    if (!viewModel.data.value.data.isNullOrEmpty()) {
+        listOfBooks = viewModel.data.value.data!!.toList().filter { mBook ->
+        mBook.userId == currentUser?.uid.toString()
+
+        }
+        Log.d("Books", "Homecontent: ${listOfBooks.toString()}")
+    }
 
 
 
-    val listOfBooks = listOf(
-        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
-        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
-        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
-        MBook(id = "sdjhk", title = null, authors = "gakhskj", notes = null),
-        MBook(id = "sdjhk", title = "oull", authors = "gakhskj", notes = null)
-    )
 
     val email = FirebaseAuth.getInstance().currentUser?.email
     val currentUserName = if (!email.isNullOrEmpty())
         email
-            ?.split("@")?.get(0)
+            .split("@")[0]
     else "NA"
     Column(
         Modifier.padding(top = 65.dp),
@@ -112,7 +119,7 @@ fun HomeContent(navController: NavController) {
                         .size(45.dp),
                     tint = MaterialTheme.colorScheme.secondaryContainer)
                 Text(
-                    text = currentUserName!!,
+                    text = currentUserName,
                     modifier = Modifier.padding(2.dp),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Red,
@@ -126,12 +133,13 @@ fun HomeContent(navController: NavController) {
 
 
         }
-        ReadingRightNowArea(listOfBooks = listOf(),
+        ReadingRightNowArea(listOfBooks = listOfBooks,
             navController = navController)
 
         TitleSection(label = "Reading List")
 
-        BookListArea(listOfBooks = listOfBooks, navController = navController)
+        BookListArea(listOfBooks = listOfBooks,
+            navController = navController)
 
 
        
@@ -144,9 +152,12 @@ fun HomeContent(navController: NavController) {
 @Composable
 fun BookListArea(listOfBooks: List<MBook>,
                  navController: NavController) {
-    HorizontalScrollableComponent(listOfBooks){
-        Log.d("TAG", "Booklistarea: $it")
-        //TODO: on card clicked navigate to details screen
+    val addedBooks = listOfBooks.filter { mBook ->
+    mBook.startedReading == null && mBook.finishedReading == null
+
+    }
+    HorizontalScrollableComponent(addedBooks){
+        navController.navigate(ReaderScreen.UpdateScreen.name + "/$it")
     }
 
 
@@ -155,6 +166,7 @@ fun BookListArea(listOfBooks: List<MBook>,
 
 @Composable
 fun HorizontalScrollableComponent(listOfBooks: List<MBook>,
+                                  viewModel: HomeScreenViewModel = hiltViewModel(),
                                 onCardPressed: (String) -> Unit) {
     val scrollState = rememberScrollState()
     
@@ -162,13 +174,29 @@ fun HorizontalScrollableComponent(listOfBooks: List<MBook>,
         .fillMaxWidth()
         .heightIn(280.dp)
         .horizontalScroll(scrollState)) {
+        if (viewModel.data.value.loading == true) {
+            LinearProgressIndicator()
+        }else{
+            if (listOfBooks.isNullOrEmpty()) {
+                Surface(modifier = Modifier.padding(23.dp)) {
+                    Text(text = "No books found, Add a book",
+                        style = TextStyle(color = Color.Red.copy(alpha = 0.4f),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                        )
+                    )
+                }
+            }else{
+                for (book in listOfBooks) {
+                    ListCard(book ) {
+                        onCardPressed(book.googleBookId.toString())
 
-        for (book in listOfBooks) {
-            ListCard(book = MBook()) {
-             onCardPressed(it)
-
+                    }
+                }
             }
         }
+
+
 
     }
 }

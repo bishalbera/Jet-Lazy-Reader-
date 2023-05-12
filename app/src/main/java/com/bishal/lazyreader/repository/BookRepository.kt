@@ -2,6 +2,7 @@ package com.bishal.lazyreader.repository
 
 
 
+import android.util.Log
 import com.bishal.lazyreader.data.Resource
 import com.bishal.lazyreader.model.Item
 import com.bishal.lazyreader.network.BooksApi
@@ -17,8 +18,9 @@ class BookRepository @Inject constructor(private val api: BooksApi) {
             if (itemList.isNotEmpty()) Resource.Loading(data = false)
             Resource.Success(data = itemList)
 
-        }catch (exception: Exception) {
-            Resource.Error(message = exception.message.toString())
+        }catch (e: Exception) {
+            Log.d("repository", "getooks: Failed ${e.message.toString()}")
+            Resource.Error(message = e.message.toString())
         }
 
     }
