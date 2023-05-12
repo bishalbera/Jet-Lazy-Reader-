@@ -28,14 +28,4 @@ class FireRepository @Inject constructor(
 
     }
 
-
-
-
-
-
-
-
-
-
-
 }

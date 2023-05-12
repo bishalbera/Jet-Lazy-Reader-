@@ -4,21 +4,16 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -33,22 +28,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.bishal.lazyreader.components.ReaderAppBar
+import com.bishal.lazyreader.components.RoundedButton
 import com.bishal.lazyreader.data.Resource
 import com.bishal.lazyreader.model.Item
 import com.bishal.lazyreader.model.MBook
@@ -149,65 +139,38 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
 
     }
     //Buttons
-    
+
     Row(modifier = Modifier.padding(top = 6.dp),
         horizontalArrangement = Arrangement.SpaceAround) {
-        Box(modifier = Modifier
-            .background(
-                Brush.linearGradient
-                    (
-                    colors = listOf(
-                        Color(0xff40c9ff),
-                        Color(0xffe81cff)
-                    )
-                )
-            )
-            .clickable {
-                //save to Firestore database
-                val book = MBook(
-                    title = bookData?.title,
-                    authors = bookData?.authors.toString(),
-                    description = bookData?.description,
-                    categories = bookData?.categories.toString(),
-                    notes = "",
-                    photoUrl = bookData?.imageLinks?.thumbnail,
-                    publishedDate = bookData?.publishedDate,
-                    pageCount = bookData?.pageCount.toString(),
-                    rating = 0.0,
-                    googleBookId = googleBookId,
-                    userId = FirebaseAuth.getInstance().currentUser?.uid.toString())
-                saveToFirebase(book, navController)
-            }
-            .size(55.dp)
-            ) {
-            Text(text = "Save", style = TextStyle(Color.White,
-                fontSize = 15.sp), modifier = Modifier.align(Center))
+        RoundedButton(label = "Save"){
+            //save this book to the firestore database
+            val book = MBook(
+                title = bookData?.title,
+                authors = bookData?.authors.toString(),
+                description = bookData?.description,
+                categories = bookData?.categories.toString(),
+                notes = "",
+                photoUrl = bookData?.imageLinks?.thumbnail,
+                publishedDate = bookData?.publishedDate,
+                pageCount = bookData?.pageCount.toString(),
+                rating = 0.0,
+                googleBookId = googleBookId,
+                userId = FirebaseAuth.getInstance().currentUser?.uid.toString())
+
+            saveToFirebase(book, navController = navController)
 
         }
         Spacer(modifier = Modifier.width(25.dp))
-
-        Box(modifier = Modifier
-            .background(
-                Brush.linearGradient
-                    (
-                    colors = listOf(
-                        Color(0xff40c9ff),
-                        Color(0xffe81cff)
-                    )
-                )
-            )
-            .clickable {
-                navController.popBackStack()
-
-            }
-            .size(55.dp)
-        ) {
-            Text(text = "Cancel", style = TextStyle(Color.White,
-                fontSize = 15.sp), modifier = Modifier.align(Center))
-
+        RoundedButton(label = "Cancel"){
+            navController.popBackStack()
         }
+
     }
+
+
 }
+
+
 
 fun saveToFirebase(book: MBook, navController: NavController) {
     val db = FirebaseFirestore.getInstance()

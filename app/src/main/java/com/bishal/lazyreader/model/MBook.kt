@@ -6,7 +6,7 @@ import com.google.firebase.firestore.PropertyName
 
 data class MBook(
 
-               @Exclude var id: String? = null,
+               @Exclude var id: String? = null ,
                  var title: String? = null,
                  var authors: String? = null,
                  var notes: String? = null,

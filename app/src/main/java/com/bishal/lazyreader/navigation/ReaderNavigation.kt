@@ -11,12 +11,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bishal.lazyreader.screens.details.ReaderDetailsScreen
+import com.bishal.lazyreader.screens.home.HomeScreenViewModel
 import com.bishal.lazyreader.screens.home.ReaderHomeScreen
 import com.bishal.lazyreader.screens.login.ReaderLoginScreen
 import com.bishal.lazyreader.screens.search.ReaderSearchScreen
 import com.bishal.lazyreader.screens.lottie.ReaderLottieScreen
 import com.bishal.lazyreader.screens.search.ReaderSearchScreenViewModel
 import com.bishal.lazyreader.screens.stats.ReaderStatsScreen
+import com.bishal.lazyreader.screens.update.BookUpdateScreen
 
 @Composable
 fun ReaderNavigation(){
@@ -30,7 +32,8 @@ val navController = rememberNavController()
             ReaderLoginScreen(navController = navController)
         }
         composable(ReaderScreen.ReaderHomeScreen.name){
-            ReaderHomeScreen(navController = navController)
+            val homeViewModel = hiltViewModel<HomeScreenViewModel>()
+            ReaderHomeScreen(navController = navController, viewModel = homeViewModel)
         }
         composable(ReaderScreen.ReaderStatsScreen.name){
             ReaderStatsScreen(navController = navController)
@@ -47,6 +50,18 @@ val navController = rememberNavController()
         backStackEntry.arguments?.getString("bookId").let {
             ReaderDetailsScreen(navController = navController, bookId = it.toString())
         }
+
+        }
+
+        val updateName = ReaderScreen.UpdateScreen.name
+        composable("$updateName/{bookItemId}",
+            arguments = listOf(navArgument("bookItemId") {
+                type = NavType.StringType
+            })) { navBackStackEntry ->
+
+            navBackStackEntry.arguments?.getString("bookItemId").let {
+                BookUpdateScreen(navController = navController, bookItemId = it.toString())
+            }
 
         }
     }
