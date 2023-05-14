@@ -9,15 +9,14 @@ import com.bishal.lazyreader.data.DataOrException
 import com.bishal.lazyreader.model.MBook
 import com.bishal.lazyreader.repository.FireRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val repository: FireRepository): ViewModel() {
     val data: MutableState<DataOrException<List<MBook>, Boolean, Exception>>
             = mutableStateOf(DataOrException(listOf(), true,Exception("")))
-
     init {
         getAllBooksFromDatabase()
     }
@@ -25,11 +24,12 @@ class HomeScreenViewModel @Inject constructor(
     private fun getAllBooksFromDatabase() {
         viewModelScope.launch {
             data.value.loading = true
-            data.value = repository.getAllBooksFromDatabase()
-            if (!data.value.data.isNullOrEmpty()) data.value.loading = false
+            repository.getAllBooksFromDatabase().collect { result ->
+                data.value = result
+                if (!data.value.data.isNullOrEmpty()) data.value.loading = false
+            }
         }
         Log.d("GET", "getAllBooksFromDatabase: ${data.value.data?.toList().toString()}")
-
     }
 
 

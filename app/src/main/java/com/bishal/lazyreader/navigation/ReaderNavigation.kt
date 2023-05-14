@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class)
 
 package com.bishal.lazyreader.navigation
 
@@ -14,8 +14,8 @@ import com.bishal.lazyreader.screens.details.ReaderDetailsScreen
 import com.bishal.lazyreader.screens.home.HomeScreenViewModel
 import com.bishal.lazyreader.screens.home.ReaderHomeScreen
 import com.bishal.lazyreader.screens.login.ReaderLoginScreen
-import com.bishal.lazyreader.screens.search.ReaderSearchScreen
 import com.bishal.lazyreader.screens.lottie.ReaderLottieScreen
+import com.bishal.lazyreader.screens.search.ReaderSearchScreen
 import com.bishal.lazyreader.screens.search.ReaderSearchScreenViewModel
 import com.bishal.lazyreader.screens.stats.ReaderStatsScreen
 import com.bishal.lazyreader.screens.update.BookUpdateScreen
