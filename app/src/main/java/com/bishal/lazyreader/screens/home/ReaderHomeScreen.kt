@@ -89,7 +89,7 @@ fun HomeContent(navController: NavController,
         mBook.userId == currentUser?.uid.toString()
 
         }
-        Log.d("Books", "Homecontent: ${listOfBooks.toString()}")
+        Log.d("Books", "Homecontent: $listOfBooks")
     }
 
 
@@ -157,6 +157,7 @@ fun BookListArea(listOfBooks: List<MBook>,
 
     }
     HorizontalScrollableComponent(addedBooks){
+        Log.d("TAG", "BookListArea: $it")
         navController.navigate(ReaderScreen.UpdateScreen.name + "/$it")
     }
 
