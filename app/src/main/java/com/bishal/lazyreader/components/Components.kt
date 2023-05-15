@@ -296,7 +296,8 @@ fun ListCard(book: MBook,
             isStartedReading.value = book.startedReading != null
 
 
-            RoundedButton(label =   "Reading",
+            RoundedButton(label = if (isStartedReading.value)  "Reading" else
+                "Not Started",
                 radius = 70)
 
         }
