@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
@@ -53,13 +54,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.bishal.lazyreader.R
 import com.bishal.lazyreader.components.InputField
 import com.bishal.lazyreader.components.RatingBar
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.components.RoundedButton
-import com.bishal.lazyreader.components.showToast
 import com.bishal.lazyreader.data.DataOrException
 import com.bishal.lazyreader.model.MBook
 import com.bishal.lazyreader.navigation.ReaderScreen
@@ -95,8 +95,8 @@ fun BookUpdateScreen(navController: NavHostController,
             .fillMaxSize()
             .padding(3.dp)) {
             Column(
-                modifier = Modifier.padding(top = 3.dp),
-                verticalArrangement = Arrangement.Top,
+                modifier = Modifier.padding(top = 23.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = CenterHorizontally
             ) {
                 Log.d("INFO", "BookUpdateScreen: ${viewModel.data.value.data.toString()}")
@@ -115,9 +115,17 @@ fun BookUpdateScreen(navController: NavHostController,
 
                     }
 
-                    ShowSimpleForm(book = viewModel.data.value.data?.first { mBook ->
+                    val matchingBook = viewModel.data.value.data?.find { mBook ->
                         mBook.googleBookId == bookItemId
-                    }!!, navController)
+                    }
+
+                    if (matchingBook != null) {
+                        ShowSimpleForm(book = matchingBook, navController)
+                    } else {
+                        // Handle the case when no matching book is found
+                    }
+
+
 
                 }
 
@@ -149,8 +157,7 @@ fun ShowSimpleForm(book: MBook,
     val ratingVal = remember {
         mutableStateOf(0)
     }
-    SimpleForm(defaultValue = if (book.notes.toString().isNotEmpty()) book.notes.toString()
-    else "No thoughts available."){ note ->
+    SimpleForm(defaultValue = book.notes.toString().ifEmpty { "No thoughts available :(" }){ note ->
         notesText.value = note
 
 
@@ -201,7 +208,6 @@ fun ShowSimpleForm(book: MBook,
 
     }
 
-    Spacer(modifier = Modifier.padding(bottom = 15.dp))
     Row {
 
         val changedNotes = book.notes != notesText.value
@@ -224,10 +230,10 @@ fun ShowSimpleForm(book: MBook,
                     .document(book.id!!)
                     .update(bookToUpdate)
                     .addOnCompleteListener {
-                        showToast(context, "Book Updated Successfully!")
+                       // showToast(context, "Book Updated Successfully!")
                         navController.navigate(ReaderScreen.ReaderHomeScreen.name)
 
-                        // Log.d("Update", "ShowSimpleForm: ${task.result.toString()}")
+
 
                     }.addOnFailureListener{
                         Log.w("Error", "Error updating document" , it)
@@ -265,6 +271,7 @@ fun ShowSimpleForm(book: MBook,
         }
 
         RoundedButton("Delete"){
+
             openDialog.value = true
         }
 
@@ -279,18 +286,31 @@ fun ShowSimpleForm(book: MBook,
 fun ShowAlertDialog(
     message: String,
     openDialog: MutableState<Boolean>,
-    onYesPressed: () -> Unit) {
-
+    onYesPressed: () -> Unit
+) {
     if (openDialog.value) {
-        AlertDialog(onDismissRequest = { },
+        AlertDialog(
+            onDismissRequest = { },
             title = { Text(text = "Delete Book") },
-            text = { Text(text = message)},
-            confirmButton = {onYesPressed.invoke()},
-            dismissButton = {openDialog.value = false}
+            text = { Text(text = message) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onYesPressed.invoke()
+                        openDialog.value = false // Close the dialog after pressing "Yes"
+                    }
+                ) {
+                    Text(text = "Yes")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { openDialog.value = false }
+                ) {
+                    Text(text = "No")
+                }
+            }
         )
-
-
-
     }
 }
 
@@ -320,7 +340,7 @@ fun SimpleForm(
                 .fillMaxWidth()
                 .height(140.dp)
                 .padding(3.dp)
-                .background(Color.White, CircleShape)
+                .background(Color(0xff867070), CircleShape)
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             valueState = textFieldValue,
             labelId = "Enter Your thoughts",
@@ -338,27 +358,32 @@ fun SimpleForm(
 }
 
 @Composable
-fun ShowBookUpdate(bookInfo: DataOrException<List<MBook>,
-        Boolean, Exception>, bookItemId: String) {
+fun ShowBookUpdate(
+    bookInfo: DataOrException<List<MBook>, Boolean, Exception>,
+    bookItemId: String
+) {
     Row() {
         Spacer(modifier = Modifier.width(43.dp))
         if (bookInfo.data != null) {
-            Column(modifier = Modifier.padding(4.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                CardListItem(book = bookInfo.data!!.first{mBook ->
-                    mBook.googleBookId == bookItemId
+            val matchingBook = bookInfo.data!!.find { mBook ->
+                mBook.googleBookId == bookItemId
+            }
 
-                }, onPressDetails = {})
-
+            if (matchingBook != null) {
+                Column(
+                    modifier = Modifier.padding(4.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = CenterHorizontally
+                ) {
+                    CardListItem(book = matchingBook, onPressDetails = {})
+                }
+            } else {
+                // Handle case when no book is found
             }
         }
-
     }
-
-
-
 }
+
 
 @Composable
 fun CardListItem(book: MBook,
@@ -371,7 +396,7 @@ fun CardListItem(book: MBook,
         .clickable { },
         ) {
         Row(horizontalArrangement = Arrangement.Start) {
-            Image(painter = rememberImagePainter(data = book.photoUrl.toString()),
+            Image(painter = rememberAsyncImagePainter(model = book.photoUrl.toString()),
                 contentDescription = null ,
                 modifier = Modifier
                     .height(100.dp)
@@ -384,7 +409,7 @@ fun CardListItem(book: MBook,
                     ))
             Column {
                 Text(text = book.title.toString(),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier
                         .padding(start = 8.dp, end = 8.dp)
                         .width(120.dp),
@@ -393,14 +418,14 @@ fun CardListItem(book: MBook,
                     overflow = TextOverflow.Ellipsis)
 
                 Text(text = book.authors.toString(),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.padding(start = 8.dp,
                         end = 8.dp,
                         top = 2.dp,
                         bottom = 0.dp))
 
                 Text(text = book.publishedDate.toString(),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.padding(start = 8.dp,
                         end = 8.dp,
                         top = 0.dp,
