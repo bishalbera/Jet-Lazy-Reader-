@@ -45,20 +45,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.bishal.lazyreader.R
 import com.bishal.lazyreader.components.InputField
+import com.bishal.lazyreader.components.RatingBar
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.components.RoundedButton
 import com.bishal.lazyreader.data.DataOrException
 import com.bishal.lazyreader.model.MBook
 import com.bishal.lazyreader.navigation.ReaderScreen
 import com.bishal.lazyreader.screens.home.HomeScreenViewModel
+import com.bishal.lazyreader.utils.formatDate
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -217,7 +223,7 @@ fun ShowSimpleForm(book: MBook,
                     .document(book.id!!)
                     .update(bookToUpdate)
                     .addOnCompleteListener {
-                        showToast(context, "Book Updated Successfully!")
+                        //showToast(context, "Book Updated Successfully!")
                         navController.navigate(ReaderScreen.ReaderHomeScreen.name)
 
                         // Log.d("Update", "ShowSimpleForm: ${task.result.toString()}")
@@ -275,23 +281,15 @@ fun ShowAlertDialog(
     onYesPressed: () -> Unit) {
 
     if (openDialog.value) {
-        AlertDialog(onDismissRequest = { openDialog.value = false},
-            title = { Text(text = "Delete Book")},
+        AlertDialog(onDismissRequest = { },
+            title = { Text(text = "Delete Book") },
             text = { Text(text = message)},
-            buttons = {
-                Row(modifier = Modifier.padding(all = 8.dp),
-                    horizontalArrangement = Arrangement.Center) {
-                    TextButton(onClick = { onYesPressed.invoke() }) {
-                        Text(text = "Yes")
+            confirmButton = {onYesPressed.invoke()},
+            dismissButton = {openDialog.value = false}
+        )
 
-                    }
-                    TextButton(onClick = { openDialog.value = false }) {
-                        Text(text = "No")
 
-                    }
 
-                }
-            })
     }
 }
 
@@ -326,6 +324,8 @@ fun SimpleForm(
             valueState = textFieldValue,
             labelId = "Enter Your thoughts",
             enabled = true,
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next,
             onAction = KeyboardActions {
                 if (!valid)return@KeyboardActions
                 onSearch(textFieldValue.value.trim())
