@@ -36,7 +36,8 @@ val navController = rememberNavController()
             ReaderHomeScreen(navController = navController, viewModel = homeViewModel)
         }
         composable(ReaderScreen.ReaderStatsScreen.name){
-            ReaderStatsScreen(navController = navController)
+            val homeViewModel = hiltViewModel<HomeScreenViewModel>()
+            ReaderStatsScreen(navController = navController, viewModel = homeViewModel)
         }
         composable(ReaderScreen.SearchScreen.name){
             val searchViewModel = hiltViewModel<ReaderSearchScreenViewModel>()
