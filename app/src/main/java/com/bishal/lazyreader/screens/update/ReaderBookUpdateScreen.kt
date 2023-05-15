@@ -59,6 +59,7 @@ import com.bishal.lazyreader.components.InputField
 import com.bishal.lazyreader.components.RatingBar
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.components.RoundedButton
+import com.bishal.lazyreader.components.showToast
 import com.bishal.lazyreader.data.DataOrException
 import com.bishal.lazyreader.model.MBook
 import com.bishal.lazyreader.navigation.ReaderScreen
@@ -223,7 +224,7 @@ fun ShowSimpleForm(book: MBook,
                     .document(book.id!!)
                     .update(bookToUpdate)
                     .addOnCompleteListener {
-                        //showToast(context, "Book Updated Successfully!")
+                        showToast(context, "Book Updated Successfully!")
                         navController.navigate(ReaderScreen.ReaderHomeScreen.name)
 
                         // Log.d("Update", "ShowSimpleForm: ${task.result.toString()}")

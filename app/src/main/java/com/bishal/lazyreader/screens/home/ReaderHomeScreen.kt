@@ -206,6 +206,14 @@ fun HorizontalScrollableComponent(listOfBooks: List<MBook>,
 @Composable
 fun ReadingRightNowArea(listOfBooks: List<MBook>,
                         navController: NavController) {
-    ListCard(book = MBook())
+    //Filter books by reading now
+    val readingNowList = listOfBooks.filter { mBook ->
+        mBook.startedReading != null && mBook.finishedReading == null
+    }
+
+    HorizontalScrollableComponent(readingNowList){
+        Log.d("TAG", "BoolListArea: $it")
+        navController.navigate(ReaderScreen.UpdateScreen.name + "/$it")
+    }
 
 }
