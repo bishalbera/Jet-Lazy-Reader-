@@ -6,6 +6,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -95,15 +96,28 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
     val bookData = bookInfo.data?.volumeInfo
     val googleBookId = bookInfo.data?.id
 
-    Card(modifier = Modifier.padding(34.dp),
-        shape = CircleShape, elevation = CardDefaults.cardElevation(4.dp)
+    Box(modifier = Modifier.padding(1.dp)
+        .fillMaxSize(0.5f),
+     
         ) {
         Image(painter = rememberAsyncImagePainter(model = bookData?.imageLinks?.thumbnail),
             contentDescription = "Book Image",
             modifier = Modifier
-                .height(90.dp)
-                .width(90.dp)
-                .padding(1.dp))
+                .size(400.dp)
+                .padding(1.dp),
+
+            contentScale = ContentScale.FillBounds,
+        alpha = 0.5f)
+        Image(painter = rememberAsyncImagePainter(model = bookData?.imageLinks?.thumbnail),
+            contentDescription = "Book Image",
+            modifier = Modifier
+                .height(190.dp)
+                .width(150.dp)
+                .padding(1.dp)
+                .align(Alignment.Center),
+
+            contentScale = ContentScale.FillBounds,
+            alpha = 1.0f)
 
     }
     Text(text = bookData?.title.toString(),
