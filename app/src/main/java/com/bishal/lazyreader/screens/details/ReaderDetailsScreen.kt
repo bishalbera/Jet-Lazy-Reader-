@@ -97,7 +97,7 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
     val googleBookId = bookInfo.data?.id
 
     Box(modifier = Modifier.padding(1.dp)
-        .fillMaxSize(0.5f),
+        .fillMaxWidth(),
      
         ) {
         Image(painter = rememberAsyncImagePainter(model = bookData?.imageLinks?.thumbnail),
