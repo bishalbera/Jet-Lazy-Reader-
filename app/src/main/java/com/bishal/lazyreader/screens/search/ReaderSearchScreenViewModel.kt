@@ -1,21 +1,18 @@
 package com.bishal.lazyreader.screens.search
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bishal.lazyreader.data.DataOrException
 import com.bishal.lazyreader.data.Resource
 import com.bishal.lazyreader.model.Item
 import com.bishal.lazyreader.repository.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ReaderSearchScreenViewModel @Inject constructor(private val repository: BookRepository)
@@ -28,7 +25,7 @@ class ReaderSearchScreenViewModel @Inject constructor(private val repository: Bo
     }
 
      private fun loadBooks() {
-        searchBooks("money")
+        searchBooks("animals")
     }
 
     fun searchBooks(query: String) {

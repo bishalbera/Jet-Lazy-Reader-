@@ -44,6 +44,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.model.MBook
+import com.bishal.lazyreader.navigation.BottomBar
 import com.bishal.lazyreader.screens.home.HomeScreenViewModel
 import com.bishal.lazyreader.utils.formatDate
 import com.google.firebase.auth.FirebaseAuth
@@ -59,14 +60,26 @@ fun ReaderStatsScreen(navController: NavController,
     var books: List<MBook>
     val currentUser = FirebaseAuth.getInstance().currentUser
 
-    Scaffold(topBar = {
-        ReaderAppBar(title = "Book Stats",
-            icon = Icons.Default.ArrowBack,
-            showProfile = false,
-            navController = navController){
-            navController.popBackStack()
+    Scaffold(
+        topBar = {
+            ReaderAppBar(
+                title = "Book Stats",
+                icon = Icons.Default.ArrowBack,
+                showProfile = false,
+                navController = navController,
+            ) {
+                navController.popBackStack()
+            }
+        },
+        bottomBar = {
+         BottomBar(
+             navController = navController,
+             onItemClick = {
+                 navController.navigate(it.route)
+             }
+         )
         }
-    }) {
+    ) {
         Surface(modifier = Modifier.padding(top = 80.dp)) {
             // only shows the books read by this user
             books = if (!viewModel.data.value.data.isNullOrEmpty()) {

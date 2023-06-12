@@ -37,10 +37,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.bishal.lazyreader.components.InputField
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.model.Item
+import com.bishal.lazyreader.navigation.BottomBar
 import com.bishal.lazyreader.navigation.ReaderScreen
 
 
@@ -51,15 +52,32 @@ fun ReaderSearchScreen(navController: NavController,
                  viewModel: ReaderSearchScreenViewModel = hiltViewModel()
 ) {
 
-    Scaffold(topBar = {
-        ReaderAppBar(title = "Search Books",
-            icon = Icons.Default.ArrowBack,
-            navController = navController,
-            showProfile = false){
-            navController.popBackStack()
 
+
+
+
+    Scaffold(
+
+        topBar = {
+            ReaderAppBar(
+                title = "Search Books",
+                icon = Icons.Default.ArrowBack,
+                navController = navController,
+                showProfile = false,
+            ) {
+                navController.popBackStack()
+
+            }
+        },
+        bottomBar = {
+            BottomBar(
+                navController = navController,
+                onItemClick = {
+                    navController.navigate(it.route)
+                }
+            )
         }
-    }) {
+    ) {
         Surface() {
             Column {
                 SearchForm(
@@ -70,15 +88,27 @@ fun ReaderSearchScreen(navController: NavController,
 
                 }
                 Spacer(modifier = Modifier.height(13.dp))
-                BookList(navController = navController)
+
+                
+                if (viewModel.isLoading) {
+                    LinearProgressIndicator()
+                } else if (viewModel.list.isNotEmpty()) {
+                    BookList(navController = navController)
+                } else {
+                    Text(text = "No books found.")
+                }
+
 
             }
+
 
 
         }
     }
 
 }
+
+
 
 @Composable
 fun BookList(navController: NavController,
@@ -129,7 +159,7 @@ fun BookRow(
             }
             else { "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=80&q=80" }
             Image(
-                painter = rememberImagePainter(data = imageUrl),
+                painter = rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = "book image",
                 modifier = Modifier
                     .width(80.dp)

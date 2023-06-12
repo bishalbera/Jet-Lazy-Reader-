@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 
 package com.bishal.lazyreader.screens.login
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,7 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,16 +47,38 @@ import com.bishal.lazyreader.components.PasswordInput
 import com.bishal.lazyreader.navigation.ReaderScreen
 import com.bishal.lazyreader.screens.lottie.ReaderLogo
 
-@Composable
-fun ReaderLoginScreen(navController: NavController,
 
-                      viewModel: LoginScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()){
+@Composable
+fun ReaderLoginScreen(
+    navController: NavController,
+    viewModel: LoginScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+){
     val showLoginForm = rememberSaveable { mutableStateOf(true) }
 
-Surface(modifier = Modifier.fillMaxSize()) {
+    val background = painterResource(id = R.drawable.background)
+
+Surface(
+    modifier = Modifier
+        .fillMaxSize()
+        .background(
+            Brush.verticalGradient(
+                listOf(Color.Transparent, Color.Black),
+                startY = 0f,
+                endY = 800f
+            )
+        )
+) {
+    Image(
+        painter = background,
+        contentDescription = "background image",
+        contentScale = ContentScale.FillBounds
+    )
+
     Column(horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top) {
         ReaderLogo()
+
+
         if (showLoginForm.value) UserForm(loading = false, isCreateAccount = false){email, password ->
             //TODO: create FB login
             viewModel.signInWithEmailAndPassword( email, password){
