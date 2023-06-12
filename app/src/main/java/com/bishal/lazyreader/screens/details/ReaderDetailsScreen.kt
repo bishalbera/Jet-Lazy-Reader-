@@ -2,6 +2,7 @@ package com.bishal.lazyreader.screens.details
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -21,74 +22,97 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
-import com.bishal.lazyreader.components.ReaderAppBar
-import com.bishal.lazyreader.components.RoundedButton
 import com.bishal.lazyreader.data.Resource
 import com.bishal.lazyreader.model.Item
-import com.bishal.lazyreader.model.MBook
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.bishal.lazyreader.utils.PaletteGenerator.convertImageUrlToBitmap
+import com.bishal.lazyreader.utils.PaletteGenerator.extractColorsFromBitmap
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
 @Composable
-fun ReaderDetailsScreen(navController: NavController ,
-                        bookId: String,
-                        viewModel: ReaderDetailViewModel = hiltViewModel()){
+fun ReaderDetailsScreen(
+    navController: NavController ,
+    viewModel: ReaderDetailViewModel = hiltViewModel(),
+    bookId: String
+) {
+    val colorPalette by viewModel.colorPalette
+//    val bookInfo = produceState<Resource<Item>>(initialValue = Resource.Loading()){
+//        value = viewModel.getBookInfo(bookId)
+//    }.value
 
-    Scaffold(
-        topBar = { ReaderAppBar(title = "Book Details",
-            navController = navController,
-            icon = Icons.Default.ArrowBack,
-            showProfile = false,
-            onBackArrowClicked = {navController.popBackStack()}) },
-    ) {
+//    DetailsContent(
+//        navController = navController,
+//        bookId,
+//        colors = colorPalette
+//
+//    )
 
-        Surface(modifier = Modifier
-            .padding(4.dp)
-            .fillMaxSize()
-            ) {
-            Column(modifier = Modifier.padding(top = 15.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top) {
 
-                val bookInfo = produceState<Resource<Item>>(initialValue = Resource.Loading()){
-                    value = viewModel.getBookInfo(bookId)
-                }.value
-                if (bookInfo.data == null) {
-                    Row() {
-                        LinearProgressIndicator()
-                        Text(text = "Loading...")
-                    }
 
-                }else{
-                    ShowBookDetails(bookInfo, navController)
-                }
+//    if (colorPalette.isNotEmpty()) {
+//
+//        DetailsContent(
+//            navController = navController,
+//            bookId = bookId,
+//            colors = colorPalette
+//        )
+//
+//    } else {
+//        viewModel.generateColorPalette()
+//    }
+//
+//    val context = LocalContext.current
+//
+//    LaunchedEffect(key1 = true, ) {
+//        viewModel.uiEvent.collectLatest { event ->
+//            when (event) {
+//                is UiEvent.GenerateColorPalette -> {
+//                    val bitmap = bookInfo.data?.volumeInfo?.imageLinks?.let {
+//                        convertImageUrlToBitmap(
+//                            imageUrl = it.thumbnail,
+//                            context = context
+//                        )
+//
+//                    }
+//                    if (bitmap != null) {
+//                        viewModel.setColorPalette(
+//                            colors = extractColorsFromBitmap(
+//                                bitmap = bitmap
+//                            )
+//                        )
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//    }
 
-            }
 
-        }
+
+    val bookInfo = produceState<Resource<Item>>(initialValue = Resource.Loading()) {
+        value = viewModel.getBookInfo(bookId)
+    }.value
+    var launchedEffectTriggered by remember { mutableStateOf(false) }
+
+    if (bookInfo is Resource.Success) {
+        viewModel.onBookInfoLoaded(bookInfo)
     }
 
 
-}
+    val imageUrl = bookInfo?.data?.volumeInfo?.imageLinks?.thumbnail
+
 
 @Composable
 fun ShowBookDetails(bookInfo: Resource<Item>,
@@ -119,100 +143,36 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
             contentScale = ContentScale.FillBounds,
             alpha = 1.0f)
 
-    }
-    Text(text = bookData?.title.toString(),
-        style = MaterialTheme.typography.labelLarge,
-        overflow = TextOverflow.Ellipsis,
-        maxLines = 19)
 
-    Text(text = "Authors: ${bookData?.authors.toString()}")
-    Text(text = "Page Count: ${bookData?.pageCount.toString()}")
-    Text(text = "Categories: ${bookData?.categories.toString()}",
-        style = MaterialTheme.typography.labelSmall,
-        maxLines = 3,
-        overflow = TextOverflow.Ellipsis)
-    Text(text = "Published: ${bookData?.publishedDate.toString()}",
-        style = MaterialTheme.typography.labelSmall)
-    Spacer(modifier = Modifier.height(5.dp))
+    val context = LocalContext.current
+    LaunchedEffect(key1 = true, ) {
+        try {
+            val bitmap = convertImageUrlToBitmap(
+                imageUrl = imageUrl.toString(),
+                context = context
+            )
 
-    val cleanDescription = HtmlCompat.fromHtml(
-        bookData?.description.toString(),
-    HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
-    val localDims = LocalContext.current.resources.displayMetrics
-    Surface(modifier = Modifier
-        .height(localDims.heightPixels.dp.times(0.09f))
-        .padding(4.dp),
-        shape = RoundedCornerShape(10.dp),
-        border = BorderStroke(1.dp, Color.DarkGray)) {
-
-        LazyColumn(modifier = Modifier.padding(4.dp)) {
-            item {
-                Text(text = cleanDescription)
+            if (bitmap != null) {
+                launchedEffectTriggered = true
+                viewModel.setColorPalette(
+                    colors = extractColorsFromBitmap(
+                        bitmap = bitmap
+                    )
+                )
             }
-        }
-
-    }
-    //Buttons
-
-    Row(modifier = Modifier.padding(top = 6.dp),
-        horizontalArrangement = Arrangement.SpaceAround) {
-        RoundedButton(label = "Save"){
-            //save this book to the firestore database
-            val book = MBook(
-                title = bookData?.title,
-                authors = bookData?.authors.toString(),
-                description = bookData?.description,
-                categories = bookData?.categories.toString(),
-                notes = "",
-                photoUrl = bookData?.imageLinks?.thumbnail,
-                publishedDate = bookData?.publishedDate,
-                pageCount = bookData?.pageCount.toString(),
-                rating = 0.0,
-                googleBookId = googleBookId,
-                userId = FirebaseAuth.getInstance().currentUser?.uid.toString())
-
-            saveToFirebase(book, navController = navController)
-
-        }
-        Spacer(modifier = Modifier.width(25.dp))
-        RoundedButton(label = "Cancel"){
-            navController.popBackStack()
+        }catch (e: Exception) {
+            Log.d("ex", e.message.toString())
         }
 
     }
 
+
+        DetailsContent(
+            navController = navController,
+            colors = colorPalette,
+            bookId = bookId,
+            bookInfo = bookInfo
+        )
 
 }
 
-
-
-fun saveToFirebase(book: MBook, navController: NavController) {
-    val db = FirebaseFirestore.getInstance()
-    val dbCollection = db.collection("books")
-
-    if (book.toString().isNotEmpty()){
-        dbCollection.add(book)
-            .addOnSuccessListener { documentRef ->
-                val docId = documentRef.id
-                dbCollection.document(docId)
-                    .update(hashMapOf("id" to docId) as Map<String, Any>)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            navController.popBackStack()
-                        }
-
-
-                    }.addOnFailureListener {
-                        Log.w("Error", "SaveToFirebase:  Error updating doc",it )
-                    }
-
-            }
-
-
-    }else {
-
-
-
-    }
-
-}

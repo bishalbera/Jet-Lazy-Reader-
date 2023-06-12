@@ -40,11 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.bishal.lazyreader.components.FABContent
 import com.bishal.lazyreader.components.ListCard
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.components.TitleSection
 import com.bishal.lazyreader.model.MBook
+import com.bishal.lazyreader.navigation.BottomBar
 import com.bishal.lazyreader.navigation.ReaderScreen
 import com.google.firebase.auth.FirebaseAuth
 
@@ -52,15 +52,21 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun ReaderHomeScreen(navController: NavController,
                      viewModel: HomeScreenViewModel = hiltViewModel()){
-    
 
-    Scaffold(topBar = {
-                      ReaderAppBar(title = "Lazy Reader", navController = navController)
-    },
-        floatingActionButton = {
-            FABContent{
-                navController.navigate(ReaderScreen.SearchScreen.name)
-            }
+
+    Scaffold(
+        topBar = {
+            ReaderAppBar(title = "Lazy Reader", navController = navController)
+        },
+
+        bottomBar = {
+
+            BottomBar(
+                navController = navController,
+                onItemClick = {
+                    navController.navigate(it.route)
+                }
+            )
         }) {
         Surface(modifier = Modifier.fillMaxSize()) {
             //home content
