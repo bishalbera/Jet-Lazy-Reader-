@@ -45,7 +45,6 @@ import com.bishal.lazyreader.R
 import com.bishal.lazyreader.components.EmailInput
 import com.bishal.lazyreader.components.PasswordInput
 import com.bishal.lazyreader.navigation.ReaderScreen
-import com.bishal.lazyreader.screens.lottie.ReaderLogo
 
 
 @Composable
@@ -75,8 +74,8 @@ Surface(
     )
 
     Column(horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top) {
-        ReaderLogo()
+        verticalArrangement = Arrangement.Center) {
+
 
 
         if (showLoginForm.value) UserForm(loading = false, isCreateAccount = false){email, password ->
@@ -98,7 +97,7 @@ Surface(
     Row (
         modifier = Modifier.padding(15.dp),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Bottom
     ){
         val text = if (showLoginForm.value) "Sign up" else "Login"
         Text(text = "New User?")
@@ -109,7 +108,7 @@ Surface(
                 }
                 .padding(start = 5.dp),
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.tertiary)
 
     }
 
@@ -134,8 +133,9 @@ fun UserForm(
 
     val modifier = Modifier
         .height(250.dp)
-        .background(MaterialTheme.colorScheme.background)
+        .background(Color.Transparent)
         .verticalScroll(rememberScrollState())
+    Alignment.CenterHorizontally
     
     Column(modifier,
     horizontalAlignment = Alignment.CenterHorizontally) {
@@ -162,6 +162,7 @@ fun UserForm(
             validInputs = valid,
         ){
             onDone(email.value.trim(), password.value.trim())
+
             keyboardController?.hide()
         }
     }
@@ -181,7 +182,11 @@ fun SubmitButton(textID: String,
             enabled = !loading && validInputs,
             shape = CircleShape) {
         if (loading) CircularProgressIndicator(modifier = Modifier.size(25.dp))
-        else Text(text = textID, modifier = Modifier.padding(5.dp))
+        else Text(
+            text = textID,
+            color = Color(0xff45271D),
+            modifier = Modifier.padding(5.dp)
+        )
 
 
     }

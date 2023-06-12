@@ -41,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -106,8 +107,16 @@ fun InputField(
         onValueChange = {valueState.value= it},
         label = {Text(text = labelId)},
         singleLine = true,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            containerColor = Color.LightGray.copy(alpha = 0.4f),
+            cursorColor = Color(0xFFE69360),
+            disabledBorderColor = Color(0xFF203226),
+            focusedBorderColor = Color(0xFF203226),
+            focusedLabelColor = Color(0xFFE69360),
+            unfocusedLabelColor = Color(0xFFE69360)
+        ),
         textStyle = TextStyle(fontSize = 18.sp,
-            color = MaterialTheme.colorScheme.onBackground),
+            color = Color.Black),
         modifier = modifier
             .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
             .fillMaxWidth(),
@@ -135,11 +144,22 @@ fun PasswordInput(
         onValueChange = {passwordState.value = it},
         label = { Text(text = labelId)},
         singleLine = true,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            containerColor = Color.LightGray.copy(alpha = 0.4f),
+            cursorColor = Color(0xFFE69360),
+            disabledBorderColor = Color(0xFF203226),
+            focusedBorderColor = Color(0xFF203226),
+            focusedLabelColor = Color(0xFFE69360),
+            unfocusedLabelColor = Color(0xFFE69360)
+        ),
         modifier = modifier
             .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
             .fillMaxWidth(),
         enabled = enabled,
-    textStyle = TextStyle(fontSize = 18.sp, color = MaterialTheme.colorScheme.onBackground),
+    textStyle = TextStyle(
+        fontSize = 18.sp,
+        color = Color.Black
+    ),
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password,
                                     imeAction = imeAction),
     visualTransformation = visualTransformation,
@@ -396,6 +416,7 @@ fun RatingBar(
                                 onPressRating(i)
                                 ratingState = i
                             }
+
                             MotionEvent.ACTION_UP -> {
                                 selected = false
                             }

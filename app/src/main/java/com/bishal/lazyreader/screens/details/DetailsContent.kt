@@ -3,7 +3,11 @@
 package com.bishal.lazyreader.screens.details
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -65,6 +70,7 @@ import com.bishal.lazyreader.ui.theme.titleColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.net.URLEncoder
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -355,6 +361,12 @@ fun ShowBookDetails(
                 RoundedButton(label = "Cancel"){
                     navController.popBackStack()
                 }
+                Spacer(modifier = Modifier.width(23.dp))
+                val context = LocalContext.current
+                RoundedButton(label = "Search Book"){
+
+                    openInExternalBrowserWithBookSearchQuery(bookData?.title, context = context)
+                }
 
             }
 
@@ -365,6 +377,30 @@ fun ShowBookDetails(
     }
 
 
+}
+
+fun openInExternalBrowserWithBookSearchQuery(title: String?, context: Context) {
+    val searchQueryUrl = generateSearchQueryUrl(title)
+
+    val context = context
+
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(searchQueryUrl))
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+    val packageManager = context.packageManager
+    if (intent.resolveActivity(packageManager) !=null){
+        context.startActivity(intent)
+    }else{
+        // Handle case when no browser app is available on the device
+        Toast.makeText(context, "No browser app found", Toast.LENGTH_SHORT).show()
+    }
+
+
+}
+
+fun generateSearchQueryUrl(title: String?): String? {
+    val encodedTitle = URLEncoder.encode(title, "UTF-8")
+    return "https://www.google.com/search?q=$encodedTitle+book+pdf+download"
 }
 
 
