@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,14 +14,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.sharp.Person
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,8 +37,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -142,10 +145,11 @@ fun ReaderStatsScreen(navController: NavController,
                     LinearProgressIndicator()
                 }else {
                     Divider()
-                    LazyColumn(modifier = Modifier
+                    LazyVerticalGrid(modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(),
-                        contentPadding = PaddingValues(16.dp)
+                        //contentPadding = PaddingValues(16.dp),
+                        columns = GridCells.Fixed(2)
                     ){
                         //filter books by finished ones
                         val readBooks: List<MBook> = if (!viewModel.data.value.data.isNullOrEmpty()){
@@ -181,61 +185,90 @@ fun ReaderStatsScreen(navController: NavController,
 @Composable
 fun BookRowStats(
     book: MBook) {
+
+    val context = LocalContext.current
+    val resources = context.resources
+
+    val displayMetrics = resources.displayMetrics
+
+    val screenWidth = displayMetrics.widthPixels / displayMetrics.density
+    val spacing = 10.dp
+
     Card(modifier = Modifier
-        .clickable {
-            //navController.navigate(ReaderScreens.DetailScreen.name + "/${book.id}")
-        }
-        .fillMaxWidth()
-        .height(100.dp)
-        .padding(3.dp),
-        shape = RectangleShape,
+        .clickable {}
+        .width(242.dp)
+        .height(236.dp)
+        .padding(6.dp),
+        shape = RoundedCornerShape(29.dp),
+        elevation = CardDefaults.cardElevation(16.dp)
         ) {
-        Row(modifier = Modifier.padding(5.dp),
-            verticalAlignment = Alignment.Top) {
+        Column(
+            modifier = Modifier.width(screenWidth.dp - (spacing * 2)),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Row(horizontalArrangement = Arrangement.Center) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = book.photoUrl.toString()),
+                    contentDescription = "book image",
+                    modifier = Modifier
+                        .height(120.dp)
+                        .width(80.dp)
+                        .padding(4.dp)
+                )
+                Spacer(modifier = Modifier.width(50.dp))
 
-            val imageUrl: String = book.photoUrl.toString().ifEmpty { "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=80&q=80" }
-            Image(
-                painter = rememberAsyncImagePainter(model = imageUrl),
-                contentDescription = "book image",
-                modifier = Modifier
-                    .width(80.dp)
-                    .fillMaxHeight()
-                    .padding(end = 4.dp),
-            )
-
-            Column {
-
-                Row(horizontalArrangement = Arrangement.SpaceBetween) {
-
-                    Text(text = book.title.toString(), overflow = TextOverflow.Ellipsis)
-                    if (book.rating!! >= 4) {
-                        Spacer(modifier = Modifier.fillMaxWidth(0.8f))
-                        Icon(imageVector = Icons.Default.ThumbUp,
-                            contentDescription = "Thumbs up",
-                            tint = Color.Green.copy(alpha = 0.5f))
-                    }else {
+                Column(
+                    modifier = Modifier.padding(top = 25.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (book.rating!! >= 4 ) {
+                        Icon(
+                            imageVector = Icons.Default.ThumbUp,
+                            contentDescription = "thumbs up icon",
+                            tint = Color.Green.copy(alpha = 0.5f)
+                        )
+                    }else{
                         Box{}
                     }
+
                 }
-                Text(text =  "Author: ${book.authors}",
-                    overflow = TextOverflow.Clip,
-                    fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.labelSmall)
-
-                Text(text =  "Started: ${formatDate(book.startedReading!!)}",
-                    softWrap = true,
-                    overflow = TextOverflow.Clip,
-                    fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.labelSmall)
-
-                Text(text =  "Finished ${formatDate(book.finishedReading!!)}",
-                    overflow = TextOverflow.Clip,
-                    fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.labelSmall)
 
             }
-            
+            Text(
+                text = book.title.toString(),
+                modifier = Modifier.padding(4.dp),
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = book.authors.toString(),
+                modifier = Modifier.padding(4.dp),
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                fontStyle = FontStyle.Italic
+            )
+
+            Text(text =  "Started: ${formatDate(book.startedReading!!)}",
+                modifier = Modifier.padding(4.dp),
+                softWrap = true,
+                overflow = TextOverflow.Clip,
+                fontStyle = FontStyle.Italic,
+                style = MaterialTheme.typography.labelSmall
+            )
+
+            Text(text =  "Finished: ${formatDate(book.finishedReading!!)}",
+                modifier = Modifier.padding(4.dp),
+                overflow = TextOverflow.Clip,
+                fontStyle = FontStyle.Italic,
+                style = MaterialTheme.typography.labelSmall
+            )
+
         }
+
         
 
     }

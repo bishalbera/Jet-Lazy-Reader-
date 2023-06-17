@@ -9,17 +9,18 @@ import com.bishal.lazyreader.network.BooksApi
 import javax.inject.Inject
 
 class BookRepository @Inject constructor(private val api: BooksApi) {
-    suspend fun getBooks(searchQuery: String): Resource<List<Item>>{
+    suspend fun getBooks(query: String, page: Int): Resource<List<Item>>{
+
+
 
         return try {
-            Resource.Loading(data = true)
+           val response = api.getAllBooks(query, page)
 
-            val itemList = api.getAllBooks(searchQuery).items
-            if (itemList.isNotEmpty()) Resource.Loading(data = false)
-            Resource.Success(data = itemList)
+
+            Resource.Success(response.items)
 
         }catch (e: Exception) {
-            Log.d("repository", "getooks: Failed ${e.message.toString()}")
+            Log.d("repository", "getBooks: Failed ${e.message.toString()}")
             Resource.Error(message = e.message.toString())
         }
 
