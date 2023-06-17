@@ -1,62 +1,59 @@
 package com.bishal.lazyreader.screens.search
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bishal.lazyreader.data.Resource
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.bishal.lazyreader.model.Item
-import com.bishal.lazyreader.repository.BookRepository
+import com.bishal.lazyreader.network.BooksApi
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class ReaderSearchScreenViewModel @Inject constructor(private val repository: BookRepository)
-    : ViewModel() {
-    var list: List<Item> by mutableStateOf(listOf())
-    var isLoading: Boolean by mutableStateOf(true)
+class ReaderSearchScreenViewModel @Inject constructor (private val api: BooksApi) : ViewModel() {
 
-    init {
-        loadBooks()
+    // The current search query
+    private val currentQuery = MutableStateFlow(DEFAULT_QUERY)
+    private val _loadState = MutableStateFlow<LoadState>(LoadState.Idle)
+    val loadState: StateFlow<LoadState> = _loadState.asStateFlow()
+
+
+
+    // The current paging data for the search results
+    val searchResults: Flow<PagingData<Item>> = currentQuery.flatMapLatest { query ->
+        Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { BookPagingSource(api, query) }
+        ).flow
+    }.cachedIn(viewModelScope)
+
+    // Function to update the current search query
+    fun search(query: String) {
+        currentQuery.value = query
     }
 
-     private fun loadBooks() {
-        searchBooks("animals")
+    companion object {
+        private const val DEFAULT_QUERY = "Android development"
+        private const val PAGE_SIZE = 10
     }
-
-    fun searchBooks(query: String) {
-        viewModelScope.launch(Dispatchers.Default) {
-
-            if (query.isEmpty()){
-                return@launch
-            }
-            try {
-                when(val response = repository.getBooks(query)) {
-                    is Resource.Success -> {
-                        list = response.data!!
-                        if (list.isNotEmpty()) isLoading = false
-                    }
-                    is Resource.Error -> {
-                        Log.d("NETWORK", "searchbooks: failed getting the books")
-                        isLoading = false
-
-                    }
-                    else -> {isLoading = false}
-                }
-
-            }catch (exception: Exception){
-                isLoading = false
-                Log.d("Network", "searchBooks: ${exception.message.toString()}")
-            }
-
-        }
+}
 
 
-    }
 
 
+sealed class LoadState {
+    object Idle : LoadState()
+    object Loading : LoadState()
+    object Loaded : LoadState()
+    data class Error(val message: String) : LoadState()
 }
