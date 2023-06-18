@@ -11,12 +11,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -56,10 +56,6 @@ import com.bishal.lazyreader.navigation.ReaderScreen
 fun ReaderSearchScreen(navController: NavController,
                        viewModel: ReaderSearchScreenViewModel = hiltViewModel()
 ) {
-
-
-
-
 
     Scaffold(
 
@@ -177,12 +173,7 @@ fun BookList(
         }
     }
 }
-val LazyListState.isScrolledToEnd: Boolean
-    get() {
-        val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-        val totalItemCount = layoutInfo.totalItemsCount
-        return lastVisibleItemIndex >= totalItemCount - 1
-    }
+
 
 @Composable
 fun BookRow(
@@ -260,8 +251,11 @@ fun SearchForm(
         }
 
 
-        InputField(valueState = searchQueryState,
-            modifier = modifier.padding(vertical = 45.dp),
+        InputField(
+            valueState = searchQueryState,
+            modifier = modifier
+                .padding(vertical = 25.dp)
+                .fillMaxWidth(),
             labelId = "Search",
             enabled = true,
             keyboardType = KeyboardType.Text,
@@ -271,7 +265,14 @@ fun SearchForm(
                 onSearch(searchQueryState.value.trim())
                 searchQueryState.value = ""
                 keyboardController?.hide()
-            })
+            },
+            placeholder = "Search for Books, Novels..",
+            leadingIcon = Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "search icon"
+            )
+
+        )
     }
 
 
