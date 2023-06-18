@@ -10,7 +10,9 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
@@ -120,12 +122,14 @@ fun BookList(
 ) {
     val lazyPagingItems = viewModel.searchResults.collectAsLazyPagingItems()
     val lazyListState = rememberLazyListState()
+    val lazyGridState = rememberLazyGridState()
     //val loadState by viewModel.loadState.collectAsState()
 
-    LazyColumn(
+    LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(8.dp),
-        state = lazyListState
+        state = lazyGridState,
+        columns = GridCells.Fixed(2)
     ) {
         items( count = lazyPagingItems.itemCount, // Use itemCount property here
             itemContent = { index ->
