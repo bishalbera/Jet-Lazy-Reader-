@@ -2,9 +2,7 @@
 
 package com.bishal.lazyreader.components
 
-import android.content.Context
 import android.view.MotionEvent
-import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -435,9 +433,32 @@ fun RatingBar(
     }
 }
 
+@Composable
+fun BookCategoryChip(
+    category: String,
+    onExecuteSearch: (String) -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .padding(end = 8.dp),
+        shadowElevation = 8.dp,
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.primary
+    ) {
+        Row(
+            modifier = Modifier
+                .clickable { onExecuteSearch(category) }
+        ) {
+            Text(
+                text = category,
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White,
+                modifier = Modifier.padding(8.dp)
+            )
 
-fun showToast(context: Context, msg: String) {
-    Toast.makeText(context, msg, Toast.LENGTH_LONG)
-        .show()
+        }
+
+    }
 }
+
 

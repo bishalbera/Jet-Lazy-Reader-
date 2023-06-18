@@ -10,10 +10,13 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -31,7 +34,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -43,6 +45,7 @@ import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
+import com.bishal.lazyreader.components.BookCategoryChip
 import com.bishal.lazyreader.components.InputField
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.model.Item
@@ -55,8 +58,9 @@ import com.bishal.lazyreader.navigation.ReaderScreen
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalComposeUiApi
 @Composable
-fun ReaderSearchScreen(navController: NavController,
-                       viewModel: ReaderSearchScreenViewModel = hiltViewModel()
+fun ReaderSearchScreen(
+    navController: NavController,
+    viewModel: ReaderSearchScreenViewModel = hiltViewModel(),
 ) {
 
     Scaffold(
@@ -90,10 +94,20 @@ fun ReaderSearchScreen(navController: NavController,
                 SearchForm(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)){ searchQuery ->
+                        .padding(13.dp)){ searchQuery ->
                     viewModel.search(searchQuery)
 
                 }
+                BookCategoriesRow(
+                    categories = getAllBookCategories(),
+                    onItemClick = { category ->
+                        viewModel.search(category)
+
+                    }
+
+                )
+
+
                 Spacer(modifier = Modifier.height(13.dp))
 
 
@@ -113,6 +127,27 @@ fun ReaderSearchScreen(navController: NavController,
 
 }
 
+@Composable
+fun BookCategoriesRow(
+    categories: List<BookCategory>,
+    onItemClick: (String) -> Unit
+
+) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+    ){items(categories){ category ->
+        BookCategoryChip(
+            category = category.value,
+            onExecuteSearch = {
+                onItemClick(it)
+            }
+        )
+
+    }
+
+    }
+}
 
 
 @Composable
@@ -188,9 +223,9 @@ fun BookRow(
             navController.navigate(ReaderScreen.DetailScreen.name + "/${book.id}")
         }
         .fillMaxWidth()
-        .height(100.dp)
+        .height(200.dp)
         .padding(3.dp),
-        shape = RectangleShape,
+        shape = RoundedCornerShape(13.dp),
         elevation = CardDefaults.cardElevation(7.dp)) {
         Row(modifier = Modifier.padding(5.dp),
             verticalAlignment = Alignment.Top) {
@@ -245,7 +280,8 @@ fun SearchForm(
     modifier: Modifier = Modifier,
     loading: Boolean = false,
     hint: String = "Search",
-    onSearch: (String) -> Unit = {}) {
+    onSearch: (String) -> Unit = {}
+) {
     Column {
         val searchQueryState = rememberSaveable { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
@@ -277,7 +313,9 @@ fun SearchForm(
             )
 
         )
+
+
     }
-
-
 }
+
+
