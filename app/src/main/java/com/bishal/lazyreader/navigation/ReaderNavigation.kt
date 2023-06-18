@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
@@ -100,7 +101,6 @@ fun ReaderNavigation() {
 
 @Composable
 fun BottomBar(
-   // items: List<BottomBarScreen>,
     navController: NavController,
     modifier: Modifier = Modifier,
     onItemClick: (BottomBarScreen) -> Unit
@@ -113,7 +113,8 @@ fun BottomBar(
     val backStackEntry = navController.currentBackStackEntryAsState()
 
     BottomNavigation(
-        modifier = modifier,
+        modifier = modifier.clip(RoundedCornerShape(13.dp))
+            .height(35.dp),
         backgroundColor = Color.DarkGray,
         elevation = 5.dp
     ) {

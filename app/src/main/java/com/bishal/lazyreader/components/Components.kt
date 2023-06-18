@@ -2,9 +2,7 @@
 
 package com.bishal.lazyreader.components
 
-import android.content.Context
 import android.view.MotionEvent
-import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -29,6 +27,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -84,7 +84,8 @@ fun EmailInput(
     imeAction: ImeAction = ImeAction.Next,
     onAction: KeyboardActions = KeyboardActions.Default
 ){
-    InputField(modifier = modifier,
+    InputField(
+        modifier = modifier,
         valueState = emailState,
         labelId = labelId,
         enabled = enabled,
@@ -101,18 +102,24 @@ fun InputField(
     enabled: Boolean,
     keyboardType: KeyboardType,
     imeAction: ImeAction,
-    onAction: KeyboardActions) {
+    onAction: KeyboardActions,
+    placeholder: String? = null,
+    leadingIcon: Unit? = null
+) {
+    val containerColor = Color.LightGray.copy(alpha = 0.4f)
     OutlinedTextField(value = valueState.value,
         onValueChange = {valueState.value= it},
         label = {Text(text = labelId)},
         singleLine = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            containerColor = Color.LightGray.copy(alpha = 0.4f),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = containerColor,
+            unfocusedContainerColor = containerColor,
+            disabledContainerColor = containerColor,
             cursorColor = Color(0xFFE69360),
-            disabledBorderColor = Color(0xFF203226),
             focusedBorderColor = Color(0xFF203226),
+            disabledBorderColor = Color(0xFF203226),
             focusedLabelColor = Color(0xFFE69360),
-            unfocusedLabelColor = Color(0xFFE69360)
+            unfocusedLabelColor = Color(0xFFE69360),
         ),
         textStyle = TextStyle(fontSize = 18.sp,
             color = Color.Black),
@@ -121,7 +128,9 @@ fun InputField(
             .fillMaxWidth(),
         enabled = enabled,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
-        keyboardActions = onAction
+        keyboardActions = onAction,
+        placeholder = { Text(text = placeholder!!)},
+        leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription ="search icon" )}
     )
 
 
@@ -424,9 +433,32 @@ fun RatingBar(
     }
 }
 
+@Composable
+fun BookCategoryChip(
+    category: String,
+    onExecuteSearch: (String) -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .padding(end = 8.dp),
+        shadowElevation = 8.dp,
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.primary
+    ) {
+        Row(
+            modifier = Modifier
+                .clickable { onExecuteSearch(category) }
+        ) {
+            Text(
+                text = category,
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White,
+                modifier = Modifier.padding(8.dp)
+            )
 
-fun showToast(context: Context, msg: String) {
-    Toast.makeText(context, msg, Toast.LENGTH_LONG)
-        .show()
+        }
+
+    }
 }
+
 

@@ -10,13 +10,18 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +34,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -41,6 +45,7 @@ import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
+import com.bishal.lazyreader.components.BookCategoryChip
 import com.bishal.lazyreader.components.InputField
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.model.Item
@@ -53,13 +58,10 @@ import com.bishal.lazyreader.navigation.ReaderScreen
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalComposeUiApi
 @Composable
-fun ReaderSearchScreen(navController: NavController,
-                       viewModel: ReaderSearchScreenViewModel = hiltViewModel()
+fun ReaderSearchScreen(
+    navController: NavController,
+    viewModel: ReaderSearchScreenViewModel = hiltViewModel(),
 ) {
-
-
-
-
 
     Scaffold(
 
@@ -92,10 +94,20 @@ fun ReaderSearchScreen(navController: NavController,
                 SearchForm(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)){ searchQuery ->
+                        .padding(13.dp)){ searchQuery ->
                     viewModel.search(searchQuery)
 
                 }
+                BookCategoriesRow(
+                    categories = getAllBookCategories(),
+                    onItemClick = { category ->
+                        viewModel.search(category)
+
+                    }
+
+                )
+
+
                 Spacer(modifier = Modifier.height(13.dp))
 
 
@@ -115,6 +127,27 @@ fun ReaderSearchScreen(navController: NavController,
 
 }
 
+@Composable
+fun BookCategoriesRow(
+    categories: List<BookCategory>,
+    onItemClick: (String) -> Unit
+
+) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+    ){items(categories){ category ->
+        BookCategoryChip(
+            category = category.value,
+            onExecuteSearch = {
+                onItemClick(it)
+            }
+        )
+
+    }
+
+    }
+}
 
 
 @Composable
@@ -124,12 +157,14 @@ fun BookList(
 ) {
     val lazyPagingItems = viewModel.searchResults.collectAsLazyPagingItems()
     val lazyListState = rememberLazyListState()
+    val lazyGridState = rememberLazyGridState()
     //val loadState by viewModel.loadState.collectAsState()
 
-    LazyColumn(
+    LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(8.dp),
-        state = lazyListState
+        state = lazyGridState,
+        columns = GridCells.Fixed(2)
     ) {
         items( count = lazyPagingItems.itemCount, // Use itemCount property here
             itemContent = { index ->
@@ -177,12 +212,7 @@ fun BookList(
         }
     }
 }
-val LazyListState.isScrolledToEnd: Boolean
-    get() {
-        val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-        val totalItemCount = layoutInfo.totalItemsCount
-        return lastVisibleItemIndex >= totalItemCount - 1
-    }
+
 
 @Composable
 fun BookRow(
@@ -193,9 +223,9 @@ fun BookRow(
             navController.navigate(ReaderScreen.DetailScreen.name + "/${book.id}")
         }
         .fillMaxWidth()
-        .height(100.dp)
+        .height(200.dp)
         .padding(3.dp),
-        shape = RectangleShape,
+        shape = RoundedCornerShape(13.dp),
         elevation = CardDefaults.cardElevation(7.dp)) {
         Row(modifier = Modifier.padding(5.dp),
             verticalAlignment = Alignment.Top) {
@@ -250,7 +280,8 @@ fun SearchForm(
     modifier: Modifier = Modifier,
     loading: Boolean = false,
     hint: String = "Search",
-    onSearch: (String) -> Unit = {}) {
+    onSearch: (String) -> Unit = {}
+) {
     Column {
         val searchQueryState = rememberSaveable { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
@@ -260,8 +291,11 @@ fun SearchForm(
         }
 
 
-        InputField(valueState = searchQueryState,
-            modifier = modifier.padding(vertical = 45.dp),
+        InputField(
+            valueState = searchQueryState,
+            modifier = modifier
+                .padding(vertical = 25.dp)
+                .fillMaxWidth(),
             labelId = "Search",
             enabled = true,
             keyboardType = KeyboardType.Text,
@@ -271,8 +305,17 @@ fun SearchForm(
                 onSearch(searchQueryState.value.trim())
                 searchQueryState.value = ""
                 keyboardController?.hide()
-            })
+            },
+            placeholder = "Search for Books, Novels..",
+            leadingIcon = Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "search icon"
+            )
+
+        )
+
+
     }
-
-
 }
+
+

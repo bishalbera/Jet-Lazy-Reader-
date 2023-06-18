@@ -75,12 +75,15 @@ fun ReaderStatsScreen(navController: NavController,
             }
         },
         bottomBar = {
-         BottomBar(
-             navController = navController,
-             onItemClick = {
-                 navController.navigate(it.route)
-             }
-         )
+
+             BottomBar(
+                 navController = navController,
+                 onItemClick = {
+                     navController.navigate(it.route)
+                 }
+             )
+
+
         }
     ) {
         Surface(modifier = Modifier.padding(top = 80.dp)) {
