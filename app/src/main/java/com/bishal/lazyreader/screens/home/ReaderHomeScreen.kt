@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.bishal.lazyreader.components.ListCard
+import com.bishal.lazyreader.components.LoadingAnimation
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.components.TitleSection
 import com.bishal.lazyreader.model.MBook
@@ -182,7 +182,7 @@ fun HorizontalScrollableComponent(listOfBooks: List<MBook>,
         .heightIn(280.dp)
         .horizontalScroll(scrollState)) {
         if (viewModel.data.value.loading == true) {
-            LinearProgressIndicator()
+            LoadingAnimation()
         }else{
             if (listOfBooks.isNullOrEmpty()) {
                 Surface(modifier = Modifier.padding(23.dp)) {
