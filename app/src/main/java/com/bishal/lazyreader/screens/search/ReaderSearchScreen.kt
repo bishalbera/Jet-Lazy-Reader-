@@ -57,6 +57,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.bishal.lazyreader.components.BookCategoryChip
 import com.bishal.lazyreader.components.InputField
+import com.bishal.lazyreader.components.LoadingAnimation
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.model.Item
 import com.bishal.lazyreader.navigation.BottomBar
@@ -196,7 +197,7 @@ fun BookList(
         lazyPagingItems.apply {
             when {
                 lazyPagingItems.loadState.refresh is LoadState.Loading -> {
-                    item { CircularProgressIndicator() }
+                    item { LoadingAnimation() }
                 }
                 loadState.refresh is LoadState.Error -> {
                     val errorMessage = (loadState.refresh as LoadState.Error)
@@ -209,7 +210,7 @@ fun BookList(
             // Load more items when scrolled to the end
             if (loadState.append is LoadState.Loading) {
                 item {
-                    LinearProgressIndicator(
+                    LoadingAnimation(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
