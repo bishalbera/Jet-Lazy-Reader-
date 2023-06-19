@@ -34,8 +34,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
@@ -49,8 +55,10 @@ import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.model.MBook
 import com.bishal.lazyreader.navigation.BottomBar
 import com.bishal.lazyreader.screens.home.HomeScreenViewModel
+import com.bishal.lazyreader.screens.search.shimmerEffect
 import com.bishal.lazyreader.utils.formatDate
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
 import java.util.Locale
 
 
@@ -148,6 +156,12 @@ fun ReaderStatsScreen(navController: NavController,
                     LinearProgressIndicator()
                 }else {
                     Divider()
+                    var isLoading by remember { mutableStateOf(true) }
+                    
+                    LaunchedEffect(key1 = true){
+                        delay(3000)
+                        isLoading = false
+                    }
                     LazyVerticalGrid(modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(),
@@ -164,7 +178,13 @@ fun ReaderStatsScreen(navController: NavController,
 
                         }
                         items(items = readBooks) {book ->
-                            BookRowStats(book =book )
+                            BookRowStats(
+                                book = book,
+                                isLoading = isLoading,
+                                contentAfterLoading = {
+                                    ContentAfterLoading(book = book)
+                                }
+                            )
                         }
 
                     }
@@ -187,7 +207,50 @@ fun ReaderStatsScreen(navController: NavController,
 
 @Composable
 fun BookRowStats(
-    book: MBook) {
+    book: MBook,
+    isLoading: Boolean,
+    contentAfterLoading: @Composable () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (isLoading){
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(3.dp)
+                .shimmerEffect()
+                .clip(RoundedCornerShape(13.dp))
+        ) {
+            Row(
+                modifier = Modifier
+                    .shimmerEffect()
+                    .padding(5.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(80.dp)
+                        .fillMaxHeight()
+                        .padding(end = 4.dp)
+                        .shimmerEffect()
+                )
+                Column() {
+
+                }
+
+            }
+
+        }
+
+
+    } else{
+        contentAfterLoading()
+    }
+
+}
+
+@Composable
+fun ContentAfterLoading(book: MBook) {
 
     val context = LocalContext.current
     val resources = context.resources
@@ -204,7 +267,7 @@ fun BookRowStats(
         .padding(6.dp),
         shape = RoundedCornerShape(29.dp),
         elevation = CardDefaults.cardElevation(16.dp)
-        ) {
+    ) {
         Column(
             modifier = Modifier.width(screenWidth.dp - (spacing * 2)),
             horizontalAlignment = Alignment.Start
@@ -272,8 +335,9 @@ fun BookRowStats(
 
         }
 
-        
+
 
     }
+
 
 }
