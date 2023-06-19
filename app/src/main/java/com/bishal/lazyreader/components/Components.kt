@@ -129,7 +129,11 @@ fun InputField(
         enabled = enabled,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         keyboardActions = onAction,
-        placeholder = { Text(text = placeholder!!)},
+        placeholder = {
+            if (placeholder != null) {
+                Text(text = placeholder)
+            }
+        },
         leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription ="search icon" )}
     )
 
