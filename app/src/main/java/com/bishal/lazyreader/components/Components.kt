@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class
+)
 
 package com.bishal.lazyreader.components
 
@@ -11,14 +13,19 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -29,8 +36,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Logout
@@ -39,7 +46,6 @@ import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +55,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -61,7 +68,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInteropFilter
@@ -69,6 +78,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -79,13 +89,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.ColorUtils
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.bishal.lazyreader.R
+import com.bishal.lazyreader.model.Item
 import com.bishal.lazyreader.model.MBook
 import com.bishal.lazyreader.navigation.ReaderScreen
+import com.bishal.lazyreader.ui.theme.BlueViolet1
+import com.bishal.lazyreader.ui.theme.BlueViolet2
+import com.bishal.lazyreader.ui.theme.BlueViolet3
+import com.bishal.lazyreader.utils.standardQuadFromTo
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
+import java.util.Random
 
 @Composable
 fun EmailInput(
@@ -209,61 +226,58 @@ fun ReaderAppBar(
     navController: NavController,
     onBackArrowClicked:() -> Unit = {}
 ){
-    TopAppBar(
-        title = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (showProfile) {
-                    Icon(imageVector = Icons.Default.Book, contentDescription = "logo",
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .scale(0.9f)
+    Surface(color = BlueViolet2,
+    tonalElevation = AppBarDefaults.TopAppBarElevation) {
+        TopAppBar(
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (showProfile) {
+                        Icon(imageVector = Icons.Default.Book, contentDescription = "logo",
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .scale(0.9f)
                         )
+                    }
+                    if (icon !=null) {
+                        Icon(imageVector = icon, contentDescription = "arrowback",
+                            tint = Color.Red.copy(alpha = 0.7f),
+                            modifier = Modifier.clickable { onBackArrowClicked.invoke() })
+                    }
+                    Spacer(modifier = Modifier.width(40.dp))
+                    Text(text = title,
+                        color = Color.Red.copy(alpha = 0.7f),
+                        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp))
                 }
-                if (icon !=null) {
-                    Icon(imageVector = icon, contentDescription = "arrowback",
-                        tint = Color.Red.copy(alpha = 0.7f),
-                        modifier = Modifier.clickable { onBackArrowClicked.invoke() })
-                }
-                Spacer(modifier = Modifier.width(40.dp))
-                Text(text = title,
-                    color = Color.Red.copy(alpha = 0.7f),
-                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp))
-            }
-        },
-        actions = {
-                  IconButton(onClick = { FirebaseAuth.getInstance()
-                      .signOut().run { 
-                          navController.navigate(ReaderScreen.LoginScreen.name)
-                      }
-                  }) {
-                      if (showProfile) Row() {
-                          Icon(imageVector = Icons.Filled.Logout, contentDescription = "logout",)
+            },
+            actions = {
+                IconButton(onClick = { FirebaseAuth.getInstance()
+                    .signOut().run {
+                        navController.navigate(ReaderScreen.LoginScreen.name)
+                    }
+                }) {
+                    if (showProfile) Row() {
+                        Icon(imageVector = Icons.Filled.Logout, contentDescription = "logout",)
 
-                          
-                      }else Box {}
-                      
-                      
-                  }
-        },
-        modifier = Modifier.background(Color.Transparent),
+
+                    }else Box {}
+
+
+                }
+            },
+
+        colors = TopAppBarDefaults.topAppBarColors(BlueViolet2)
+
 
 
         )
+    }
+
         
 
     
 }
 
-@Composable
-fun FABContent(onTap: () -> Unit) {
-    FloatingActionButton(onClick = { onTap() },
-        shape = RoundedCornerShape(50.dp),
-        containerColor = Color(0xFF92CBDF)) {
-        Icon(imageVector = Icons.Default.Add, contentDescription = "add a book",
-            tint = Color.White)
 
-    }
-}
 
 @Composable
 fun TitleSection(modifier: Modifier = Modifier,
@@ -540,3 +554,163 @@ fun LoadingAnimation(
 }
 
 
+
+
+
+@Composable
+fun RandomGradientCard(modifier: Modifier, book: Item) {
+    val randomColor = remember { generateRandomColor() }
+    val gradientColors = generateGradientColors(randomColor)
+
+    BoxWithConstraints(
+        modifier = Modifier
+            .padding(7.dp)
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(10.dp))
+            .background(BlueViolet3)
+    ) {
+        val width = constraints.maxWidth
+        val height = constraints.maxHeight
+
+        //Medium colored path
+        val mediumColoredPoint1 = Offset(0f, height * 0.3f)
+        val mediumColoredPoint2 = Offset(width * 0.1f, height * 0.35f)
+        val mediumColoredPoint3 = Offset(width * 0.4f, height * 0.05f)
+        val mediumColoredPoint4 = Offset(width * 0.75f, height * 0.7f)
+        val mediumColoredPoint5 = Offset(width * 1.4f, -height.toFloat())
+
+        val mediumColoredPath = Path().apply {
+            moveTo(mediumColoredPoint1.x, mediumColoredPoint1.y)
+            standardQuadFromTo(mediumColoredPoint1, mediumColoredPoint2)
+            standardQuadFromTo(mediumColoredPoint2, mediumColoredPoint3)
+            standardQuadFromTo(mediumColoredPoint3, mediumColoredPoint4)
+            standardQuadFromTo(mediumColoredPoint4, mediumColoredPoint5)
+            lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
+            lineTo(-100f, height.toFloat() + 100f)
+            close()
+        }
+
+        // Light colored path
+        val lightPoint1 = Offset(0f, height * 0.35f)
+        val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
+        val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
+        val lightPoint4 = Offset(width * 0.65f, height.toFloat())
+        val lightPoint5 = Offset(width * 1.4f, -height.toFloat() / 3f)
+
+        val lightColoredPath = Path().apply {
+            moveTo(lightPoint1.x, lightPoint1.y)
+            standardQuadFromTo(lightPoint1, lightPoint2)
+            standardQuadFromTo(lightPoint2, lightPoint3)
+            standardQuadFromTo(lightPoint3, lightPoint4)
+            standardQuadFromTo(lightPoint4, lightPoint5)
+            lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
+            lineTo(-100f, height.toFloat() + 100f)
+            close()
+        }
+
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            drawPath(
+                path = mediumColoredPath,
+                color = BlueViolet2
+            )
+            drawPath(
+                path = lightColoredPath,
+                color = BlueViolet1
+            )
+        }
+
+           Box(
+               modifier = Modifier
+                   .padding(5.dp)
+                   .fillMaxSize()
+           ) {
+               Row(
+                   verticalAlignment = Alignment.Top,
+                   modifier = Modifier.padding(5.dp)
+               ) {
+                   val imageUrl = if(book.volumeInfo.readingModes.image){
+                       book.volumeInfo.imageLinks?.smallThumbnail
+                   }
+                   else { "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=80&q=80" }
+                   Image(
+                       painter = rememberAsyncImagePainter(model = imageUrl),
+                       contentDescription = "book image",
+                       modifier = modifier
+                           .width(80.dp)
+                           .fillMaxHeight()
+                           .padding(end = 4.dp)
+                   )
+
+                   Column {
+                       Text(
+                           text = book.volumeInfo.title,
+                           overflow = TextOverflow.Ellipsis,
+                           maxLines = 1,
+                           style = MaterialTheme.typography.labelMedium
+                       )
+                       Text(text =  "Author: ${book.volumeInfo.authors}",
+                           overflow = TextOverflow.Clip,
+                           fontStyle = FontStyle.Italic,
+                           style = MaterialTheme.typography.labelSmall)
+
+                       Text(text =  "Date: ${book.volumeInfo.publishedDate}",
+                           overflow = TextOverflow.Clip,
+                           fontStyle = FontStyle.Italic,
+                           style = MaterialTheme.typography.labelSmall)
+
+                       Text(text =  "${book.volumeInfo.categories}",
+                           overflow = TextOverflow.Clip,
+                           fontStyle = FontStyle.Italic,
+                           style = MaterialTheme.typography.labelSmall)
+
+
+
+
+
+                   }
+
+
+               }
+
+
+
+
+           }
+
+
+
+    }
+}
+
+fun generateGradientColors(color: Color): List<Color> {
+    val gradientColors = mutableListOf<Color>()
+    gradientColors.add(color)
+
+    val hsv = FloatArray(3)
+    ColorUtils.colorToHSL(color.value.toInt(), hsv)
+
+    val mediumShade = ColorUtils.HSLToColor(hsv)
+    gradientColors.add(Color(mediumShade))
+
+    // Generate dark shade by decreasing brightness
+    hsv[2] -= 0.1f
+    val darkShade = ColorUtils.HSLToColor(hsv)
+    gradientColors.add(Color(darkShade))
+
+    // Generate light shade by increasing brightness
+    hsv[2] += 0.2f
+    val lightShade = ColorUtils.HSLToColor(hsv)
+    gradientColors.add(Color(lightShade))
+
+    return gradientColors
+}
+
+
+fun generateRandomColor(): Color {
+    val random = Random(System.currentTimeMillis())
+    return Color(random.nextInt(256), random.nextInt(256), random.nextInt(256))
+
+}

@@ -1,7 +1,5 @@
 package com.bishal.lazyreader.ui.theme
 
-import androidx.compose.material.Colors
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -17,25 +15,7 @@ val Purple700 = Color(0xFF3700B3)
 val LightGray = Color(0xFFD8D8D8)
 val DarkGray = Color(0xFF2A2A2A)
 val StarColor = Color(0xFFFFC94D)
+val BlueViolet1 = Color(0xffaeb4fd)
+val BlueViolet2 = Color(0xff9fa5fe)
+val BlueViolet3 = Color(0xff8f98fd)
 
-
-val Colors.statusBarColor
-    @Composable
-    get() = if (isLight) Purple700 else Color.Black
-
-val Colors.titleColor
-    @Composable
-    get() = if (isLight) DarkGray else LightGray
-
-val Colors.descriptionColor
-    @Composable
-    get() = if (isLight) DarkGray.copy(alpha = 0.5f)
-    else LightGray.copy(alpha = 0.5f)
-
-val Colors.topAppBarContentColor: Color
-    @Composable
-    get() = if (isLight) Color.White else LightGray
-
-val Colors.topAppBarBackgroundColor: Color
-    @Composable
-    get() = if (isLight) Purple500 else Color.Black
