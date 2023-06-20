@@ -11,7 +11,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -44,20 +43,18 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.rememberAsyncImagePainter
 import com.bishal.lazyreader.components.BookCategoryChip
 import com.bishal.lazyreader.components.InputField
 import com.bishal.lazyreader.components.LoadingAnimation
+import com.bishal.lazyreader.components.RandomGradientCard
 import com.bishal.lazyreader.components.ReaderAppBar
 import com.bishal.lazyreader.model.Item
 import com.bishal.lazyreader.navigation.BottomBar
@@ -177,7 +174,7 @@ fun BookList(
    }
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp),
+        contentPadding = PaddingValues(5.dp),
         state = lazyGridState,
         columns = GridCells.Fixed(2)
     ) {
@@ -359,58 +356,17 @@ fun ContentAfterLoading(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier = modifier
-        .clickable {
-            navController.navigate(ReaderScreen.DetailScreen.name + "/${book.id}")
-        }
-        .fillMaxWidth()
-        .height(200.dp)
-        .padding(3.dp),
-        shape = RoundedCornerShape(13.dp),
-        elevation = 7.dp) {
-        Row(modifier = modifier.padding(5.dp),
-            verticalAlignment = Alignment.Top) {
-
-            val imageUrl = if(book.volumeInfo.readingModes.image){
-                book.volumeInfo.imageLinks?.smallThumbnail
+    RandomGradientCard(
+        modifier = modifier
+            .clickable {
+                navController.navigate(ReaderScreen.DetailScreen.name + "/${book.id}")
             }
-            else { "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=80&q=80" }
-            Image(
-                painter = rememberAsyncImagePainter(model = imageUrl),
-                contentDescription = "book image",
-                modifier = modifier
-                    .width(80.dp)
-                    .fillMaxHeight()
-                    .padding(end = 4.dp),
-            )
-
-            Column {
-                Text(text = book.volumeInfo.title, overflow = TextOverflow.Ellipsis)
-                Text(text =  "Author: ${book.volumeInfo.authors}",
-                    overflow = TextOverflow.Clip,
-                    fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.labelSmall)
-
-                Text(text =  "Date: ${book.volumeInfo.publishedDate}",
-                    overflow = TextOverflow.Clip,
-                    fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.labelSmall)
-
-                Text(text =  "${book.volumeInfo.categories}",
-                    overflow = TextOverflow.Clip,
-                    fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.labelSmall)
+            .height(200.dp)
+            .padding(3.dp),
+        book = book
+      )
 
 
 
-
-
-
-            }
-
-        }
-
-
-    }
 
 }
