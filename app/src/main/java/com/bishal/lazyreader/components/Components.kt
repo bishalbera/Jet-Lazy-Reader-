@@ -36,6 +36,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Close
@@ -54,6 +55,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -224,46 +226,52 @@ fun ReaderAppBar(
     navController: NavController,
     onBackArrowClicked:() -> Unit = {}
 ){
-    TopAppBar(
-        title = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (showProfile) {
-                    Icon(imageVector = Icons.Default.Book, contentDescription = "logo",
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .scale(0.9f)
+    Surface(color = BlueViolet2,
+    tonalElevation = AppBarDefaults.TopAppBarElevation) {
+        TopAppBar(
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (showProfile) {
+                        Icon(imageVector = Icons.Default.Book, contentDescription = "logo",
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .scale(0.9f)
                         )
+                    }
+                    if (icon !=null) {
+                        Icon(imageVector = icon, contentDescription = "arrowback",
+                            tint = Color.Red.copy(alpha = 0.7f),
+                            modifier = Modifier.clickable { onBackArrowClicked.invoke() })
+                    }
+                    Spacer(modifier = Modifier.width(40.dp))
+                    Text(text = title,
+                        color = Color.Red.copy(alpha = 0.7f),
+                        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp))
                 }
-                if (icon !=null) {
-                    Icon(imageVector = icon, contentDescription = "arrowback",
-                        tint = Color.Red.copy(alpha = 0.7f),
-                        modifier = Modifier.clickable { onBackArrowClicked.invoke() })
-                }
-                Spacer(modifier = Modifier.width(40.dp))
-                Text(text = title,
-                    color = Color.Red.copy(alpha = 0.7f),
-                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp))
-            }
-        },
-        actions = {
-                  IconButton(onClick = { FirebaseAuth.getInstance()
-                      .signOut().run { 
-                          navController.navigate(ReaderScreen.LoginScreen.name)
-                      }
-                  }) {
-                      if (showProfile) Row() {
-                          Icon(imageVector = Icons.Filled.Logout, contentDescription = "logout",)
+            },
+            actions = {
+                IconButton(onClick = { FirebaseAuth.getInstance()
+                    .signOut().run {
+                        navController.navigate(ReaderScreen.LoginScreen.name)
+                    }
+                }) {
+                    if (showProfile) Row() {
+                        Icon(imageVector = Icons.Filled.Logout, contentDescription = "logout",)
 
-                          
-                      }else Box {}
-                      
-                      
-                  }
-        },
-        modifier = Modifier.background(Color.Transparent),
+
+                    }else Box {}
+
+
+                }
+            },
+
+        colors = TopAppBarDefaults.topAppBarColors(BlueViolet2)
+
 
 
         )
+    }
+
         
 
     

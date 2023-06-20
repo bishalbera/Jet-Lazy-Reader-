@@ -78,6 +78,8 @@ fun ReaderSearchScreen(
                 icon = Icons.Default.ArrowBack,
                 navController = navController,
                 showProfile = false,
+
+
             ) {
                 navController.popBackStack()
 
