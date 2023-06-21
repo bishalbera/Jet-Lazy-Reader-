@@ -50,6 +50,8 @@ import com.bishal.lazyreader.ui.theme.Purple500
 @Composable
 fun ReaderNavigation() {
     val navController = rememberNavController()
+
+
     NavHost(
         navController = navController,
         startDestination = ReaderScreen.LottieScreen.name,
@@ -60,6 +62,8 @@ fun ReaderNavigation() {
             ReaderLottieScreen(navController = navController)
         }
         composable(ReaderScreen.LoginScreen.name) {
+
+
             ReaderLoginScreen(navController = navController)
         }
         composable(ReaderScreen.ReaderHomeScreen.name) {
@@ -113,7 +117,8 @@ fun BottomBar(
     val backStackEntry = navController.currentBackStackEntryAsState()
 
     BottomNavigation(
-        modifier = modifier.clip(RoundedCornerShape(13.dp))
+        modifier = modifier
+            .clip(RoundedCornerShape(13.dp))
             .height(35.dp),
         backgroundColor = Color.DarkGray,
         elevation = 5.dp

@@ -1,7 +1,6 @@
 package com.bishal.lazyreader.di
 
 import com.bishal.lazyreader.network.BooksApi
-import com.bishal.lazyreader.repository.BookRepository
 import com.bishal.lazyreader.repository.FireRepository
 import com.bishal.lazyreader.utils.Constants
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,7 +10,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 
@@ -33,5 +31,7 @@ object AppModule {
             .build()
             .create(BooksApi::class.java)
     }
+
+
 
 }
