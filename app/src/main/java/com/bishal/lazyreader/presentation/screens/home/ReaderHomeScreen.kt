@@ -207,7 +207,7 @@ fun HorizontalScrollableComponent(listOfBooks: List<MBook>,
         }else{
             if (listOfBooks.isNullOrEmpty()) {
                 Surface(modifier = Modifier.padding(23.dp)) {
-                    Text(text = "No books found, Add a book",
+                    Text(text = "No books found 😕, Add a book 🙃",
                         style = TextStyle(color = Color.Red.copy(alpha = 0.4f),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
