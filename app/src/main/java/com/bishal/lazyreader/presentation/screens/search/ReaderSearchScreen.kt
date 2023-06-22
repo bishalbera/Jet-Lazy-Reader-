@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -43,22 +44,23 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.bishal.lazyreader.presentation.common.BookCategoryChip
-import com.bishal.lazyreader.presentation.common.InputField
-import com.bishal.lazyreader.presentation.common.LoadingAnimation
-import com.bishal.lazyreader.presentation.common.RandomGradientCard
-import com.bishal.lazyreader.presentation.common.ReaderAppBar
 import com.bishal.lazyreader.domain.model.Item
 import com.bishal.lazyreader.navigation.BottomBar
 import com.bishal.lazyreader.navigation.ReaderScreen
+import com.bishal.lazyreader.presentation.common.BookCategoryChip
+import com.bishal.lazyreader.presentation.common.LoadingAnimation
+import com.bishal.lazyreader.presentation.common.RandomGradientCard
+import com.bishal.lazyreader.presentation.common.ReaderAppBar
 import kotlinx.coroutines.delay
 
 
@@ -103,7 +105,7 @@ fun ReaderSearchScreen(
                 SearchForm(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(13.dp)){ searchQuery ->
+                        .padding(top = 37.dp)){ searchQuery ->
                     viewModel.search(searchQuery)
 
                 }
@@ -297,28 +299,38 @@ fun SearchForm(
         }
 
 
-        InputField(
-            valueState = searchQueryState,
-            modifier = modifier
-                .padding(vertical = 25.dp)
-                .fillMaxWidth(),
-            labelId = "Search",
-            enabled = true,
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next,
-            onAction = KeyboardActions {
-                if (!valid) return@KeyboardActions
-                onSearch(searchQueryState.value.trim())
-                searchQueryState.value = ""
-                keyboardController?.hide()
-            },
-            placeholder = "Search for Books, Novels..",
-            leadingIcon = Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = "search icon"
-            )
 
-        )
+       TextField(
+           value = searchQueryState.value,
+           onValueChange = {
+               searchQueryState.value = it
+           },
+           modifier = modifier
+               .padding(vertical = 25.dp)
+               .size(65.dp)
+               .fillMaxWidth()
+               .clip(RoundedCornerShape(8.dp)),
+           label = {Text(text = "Search")},
+           enabled = true,
+           singleLine = true,
+           textStyle = TextStyle(fontSize = 18.sp,
+               color = Color.Black),
+           colors   = TextFieldDefaults.textFieldColors( backgroundColor = Color.Unspecified,
+               cursorColor = Color(0xFFE69360)
+              ),
+           leadingIcon = { Icon(
+               imageVector = Icons.Filled.Search,
+               contentDescription = "search icon"
+           ) },
+           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
+           keyboardActions = KeyboardActions {
+               if (!valid) return@KeyboardActions
+               onSearch(searchQueryState.value.trim())
+               searchQueryState.value = ""
+               keyboardController?.hide()
+           }
+
+       )
 
 
     }

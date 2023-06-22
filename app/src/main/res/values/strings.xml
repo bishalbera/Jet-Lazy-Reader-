@@ -2,6 +2,9 @@
     <string name="app_name">Lazy Reader</string>
     <string name="sure"> Are you sure you want to delete this book?</string>
     <string name="action"> This action is not reversible</string>
-    <string name="default_web_client_id"> 249537813406-588a7477qe3oje0pdhca8l80ijo3nc08.apps.googleusercontent.com</string>
+    <string name="email_error"> The email can not be blank</string>
+    <string name="email_valid_error"> That\'s not a valid email</string>
+    <string name="password_error"> The password needs to consist of at least 8 characters</string>
+    <string name="password_valid_error"> The password needs to contain at least one letter and digit</string>
     <string name="create_acct"> Please enter a valid email and password that is at least 6 characters long</string>
 </resources>

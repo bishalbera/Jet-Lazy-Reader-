@@ -50,10 +50,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.bishal.lazyreader.presentation.common.LoadingAnimation
-import com.bishal.lazyreader.presentation.common.ReaderAppBar
 import com.bishal.lazyreader.domain.model.MBook
 import com.bishal.lazyreader.navigation.BottomBar
+import com.bishal.lazyreader.presentation.common.LoadingAnimation
+import com.bishal.lazyreader.presentation.common.ReaderAppBar
 import com.bishal.lazyreader.presentation.screens.home.HomeScreenViewModel
 import com.bishal.lazyreader.presentation.screens.search.shimmerEffect
 import com.bishal.lazyreader.utils.formatDate
@@ -113,9 +113,14 @@ fun ReaderStatsScreen(navController: NavController,
                           contentDescription = "person icon")
 
                   }
+                    val displayName = FirebaseAuth.getInstance().currentUser?.displayName
+                    val userName = if (!displayName.isNullOrEmpty())
+                        displayName
+
+                    else FirebaseAuth.getInstance().currentUser?.email?.split("@")?.get(0)
                     Text(
                         text = "Hello, ${  
-                            currentUser?.email.toString().split("@")[0].uppercase(
+                            userName?.uppercase(
                                 Locale.getDefault()
                             )
                         }"

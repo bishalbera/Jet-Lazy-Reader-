@@ -48,15 +48,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.bishal.lazyreader.R
+import com.bishal.lazyreader.navigation.ReaderScreen
 import com.bishal.lazyreader.presentation.common.EmailInput
 import com.bishal.lazyreader.presentation.common.PasswordInput
-import com.bishal.lazyreader.navigation.ReaderScreen
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
@@ -152,15 +152,15 @@ fun UserForm(
     }
 
     val modifier = Modifier
-        .height(250.dp)
+        .height(320.dp)
         .background(Color.Transparent)
         .verticalScroll(rememberScrollState())
     Alignment.CenterHorizontally
     
     Column(modifier,
     horizontalAlignment = Alignment.CenterHorizontally) {
-        if(isCreateAccount) Text(text = stringResource(id = R.string.create_acct),
-            modifier = Modifier.padding(4.dp)) else Text(text = "")
+//        if(isCreateAccount) Text(text = stringResource(id = R.string.create_acct),
+//            modifier = Modifier.padding(4.dp)) else Text(text = "")
         EmailInput(emailState = email, enabled = !loading, onAction = KeyboardActions{
             passwordFocusRequest.requestFocus()
         })
@@ -179,13 +179,14 @@ fun UserForm(
         SubmitButton(
             textID = if (isCreateAccount) "Create Account" else "Login",
             loading = loading,
-            validInputs = valid,
-        ){
+            validInputs = valid
+        ) {
             onDone(email.value.trim(), password.value.trim())
 
             keyboardController?.hide()
+
         }
-        
+
         Spacer(modifier = Modifier.height(12.dp))
         val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -248,15 +249,18 @@ fun UserForm(
 }
 
 @Composable
-fun SubmitButton(textID: String,
-                 loading: Boolean,
-                 validInputs: Boolean,
-                 onClick: () -> Unit) {
+fun SubmitButton(
+    textID: String,
+    loading: Boolean,
+    validInputs: Boolean,
+    onClick: () -> Unit,
+    ) {
+    val viewModel = viewModel<LoginScreenViewModel>()
     Button(onClick =  onClick,
            modifier = Modifier
                .padding(3.dp)
                .fillMaxWidth(),
-            enabled = !loading && validInputs,
+           // enabled = !loading && validInputs,
             shape = CircleShape) {
         if (loading) CircularProgressIndicator(modifier = Modifier.size(25.dp))
         else Text(
