@@ -52,10 +52,10 @@ import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.bishal.lazyreader.presentation.common.RoundedButton
 import com.bishal.lazyreader.data.Resource
 import com.bishal.lazyreader.domain.model.Item
 import com.bishal.lazyreader.domain.model.MBook
+import com.bishal.lazyreader.presentation.common.RoundedButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.net.URLEncoder
@@ -310,6 +310,7 @@ fun ShowBookDetails(
 
 }
 
+@SuppressLint("QueryPermissionsNeeded")
 fun openInExternalBrowserWithBookSearchQuery(
     title: String?,
     context: Context
@@ -320,8 +321,12 @@ fun openInExternalBrowserWithBookSearchQuery(
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
     val packageManager = context.packageManager
-    if (intent.resolveActivity(packageManager) !=null){
-        context.startActivity(intent)
+    val resolvedIntentActivities = packageManager.queryIntentActivities(intent, 0)
+    if (resolvedIntentActivities.isNotEmpty()){
+        val chooserIntent = Intent.createChooser(intent, "Open with")
+
+        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(chooserIntent)
     }else{
         // Handle case when no browser app is available on the device
         Toast.makeText(context, "No browser app found", Toast.LENGTH_SHORT).show()
