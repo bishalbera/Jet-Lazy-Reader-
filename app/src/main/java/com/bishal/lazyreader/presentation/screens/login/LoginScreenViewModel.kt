@@ -17,22 +17,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
-
 class LoginScreenViewModel :ViewModel() {
 
     private val auth: FirebaseAuth = Firebase.auth
 
-
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
-
-
 
     private val _state = MutableStateFlow(SignInState())
     val state = _state.asStateFlow()
 
 
-    
 
 
     fun onSignInResult(result: SignInResult) {
@@ -126,7 +121,17 @@ class LoginScreenViewModel :ViewModel() {
             id = null
         ).toMap()
 
-        FirebaseFirestore.getInstance().collection("users")
-            .add(user)
+        val usersCollection = FirebaseFirestore.getInstance().collection("users")
+         usersCollection.whereEqualTo("userId", userId)
+             .get()
+             .addOnSuccessListener { querySnapshot ->
+             if (querySnapshot.isEmpty) {
+                 usersCollection.add(user)
+             } else{
+                 val existingUser = querySnapshot.documents[0]
+                 existingUser.reference.update(user)
+             }
+
+             }
     }
 }

@@ -41,7 +41,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,7 +52,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -111,7 +109,7 @@ fun EmailInput(
     labelId: String = "Email",
     enabled: Boolean = false,
     imeAction: ImeAction = ImeAction.Next,
-    onAction: KeyboardActions = KeyboardActions.Default
+    onAction: KeyboardActions = KeyboardActions.Default,
 ){
     InputField(
         modifier = modifier,
@@ -120,7 +118,8 @@ fun EmailInput(
         enabled = enabled,
         keyboardType = KeyboardType.Email,
         imeAction = imeAction,
-        onAction = onAction)
+        onAction = onAction,
+        )
 }
 
 @Composable
@@ -133,11 +132,12 @@ fun InputField(
     imeAction: ImeAction,
     onAction: KeyboardActions,
     placeholder: String? = null,
-    leadingIcon: Unit? = null
+    leadingIcon: ImageVector? = null
 ) {
     val containerColor = Color.LightGray.copy(alpha = 0.4f)
+
     OutlinedTextField(value = valueState.value,
-        onValueChange = {valueState.value= it},
+        onValueChange = {valueState.value = it},
         label = {Text(text = labelId)},
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
@@ -163,8 +163,15 @@ fun InputField(
                 Text(text = placeholder)
             }
         },
-        leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription ="search icon" )}
+        leadingIcon = {
+            leadingIcon?.let {
+                Icon(imageVector = it, contentDescription = null)
+            }
+        }
     )
+
+
+
 
 
 }
@@ -181,17 +188,20 @@ fun PasswordInput(
 ){
     val visualTransformation = if (passwordVisibility.value) VisualTransformation.None else
         PasswordVisualTransformation()
+    val containerColor = Color.LightGray.copy(alpha = 0.4f)
     OutlinedTextField(value = passwordState.value,
         onValueChange = {passwordState.value = it},
         label = { Text(text = labelId)},
         singleLine = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            containerColor = Color.LightGray.copy(alpha = 0.4f),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = containerColor,
+            unfocusedContainerColor = containerColor,
+            disabledContainerColor = containerColor,
             cursorColor = Color(0xFFE69360),
-            disabledBorderColor = Color(0xFF203226),
             focusedBorderColor = Color(0xFF203226),
+            disabledBorderColor = Color(0xFF203226),
             focusedLabelColor = Color(0xFFE69360),
-            unfocusedLabelColor = Color(0xFFE69360)
+            unfocusedLabelColor = Color(0xFFE69360),
         ),
         modifier = modifier
             .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
@@ -206,6 +216,12 @@ fun PasswordInput(
     visualTransformation = visualTransformation,
     trailingIcon = { PasswordVisibility(passwordVisibility = passwordVisibility) },
     keyboardActions = onAction)
+
+        Text(
+            text = "The password needs to consist of at least \n" + "8 characters",
+            color = Color.Red
+        )
+
 
 }
 @Composable
