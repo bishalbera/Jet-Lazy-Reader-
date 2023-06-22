@@ -1,7 +1,7 @@
 package com.bishal.lazyreader.di
 
 import com.bishal.lazyreader.network.BooksApi
-import com.bishal.lazyreader.repository.FireRepository
+import com.bishal.lazyreader.domain.repository.FireRepository
 import com.bishal.lazyreader.utils.Constants
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module

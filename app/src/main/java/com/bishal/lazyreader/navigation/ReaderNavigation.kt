@@ -35,14 +35,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.bishal.lazyreader.screens.details.ReaderDetailsScreen
-import com.bishal.lazyreader.screens.home.HomeScreenViewModel
-import com.bishal.lazyreader.screens.home.ReaderHomeScreen
-import com.bishal.lazyreader.screens.login.ReaderLoginScreen
-import com.bishal.lazyreader.screens.lottie.ReaderLottieScreen
-import com.bishal.lazyreader.screens.search.ReaderSearchScreen
-import com.bishal.lazyreader.screens.stats.ReaderStatsScreen
-import com.bishal.lazyreader.screens.update.BookUpdateScreen
+import com.bishal.lazyreader.presentation.screens.details.ReaderDetailsScreen
+import com.bishal.lazyreader.presentation.screens.home.HomeScreenViewModel
+import com.bishal.lazyreader.presentation.screens.home.ReaderHomeScreen
+import com.bishal.lazyreader.presentation.screens.login.ReaderLoginScreen
+import com.bishal.lazyreader.presentation.screens.lottie.ReaderLottieScreen
+import com.bishal.lazyreader.presentation.screens.search.ReaderSearchScreen
+import com.bishal.lazyreader.presentation.screens.stats.ReaderStatsScreen
+import com.bishal.lazyreader.presentation.screens.update.BookUpdateScreen
 import com.bishal.lazyreader.ui.theme.Purple500
 
 
