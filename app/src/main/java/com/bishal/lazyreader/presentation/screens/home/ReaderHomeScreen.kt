@@ -20,8 +20,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -107,7 +110,7 @@ fun HomeContent(navController: NavController,
     val currentUserName = if (!displayName.isNullOrEmpty())
         displayName
 
-    else "NA"
+    else FirebaseAuth.getInstance().currentUser?.email?.split("@")?.get(0)
     Column(
         Modifier.padding(top = 65.dp),
         verticalArrangement = Arrangement.Top
@@ -128,16 +131,28 @@ fun HomeContent(navController: NavController,
                             .size(45.dp)
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop)
+                }else{
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = "profile",
+                        modifier = Modifier
+                            .size(45.dp)
+                            .clickable {
+                                navController.navigate(ReaderScreen.ReaderStatsScreen.name)
+                            }
+                    )
                 }
 
-                Text(
-                    text = currentUserName,
-                    modifier = Modifier.padding(2.dp),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.Red,
-                    fontSize = 15.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Clip)
+                if (currentUserName != null) {
+                    Text(
+                        text = currentUserName,
+                        modifier = Modifier.padding(2.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.Red,
+                        fontSize = 15.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Clip)
+                }
                 Divider()
 
 
