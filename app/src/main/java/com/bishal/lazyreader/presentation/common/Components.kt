@@ -351,11 +351,15 @@ fun ListCard(book: MBook,
             }
             Text(text = book.title.toString(), modifier = Modifier.padding(4.dp),
                 fontWeight = FontWeight.Bold,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis)
 
-            Text(text = book.authors.toString(), modifier = Modifier.padding(4.dp),
-                style = MaterialTheme.typography.titleSmall) }
+            Text(
+                text = book.authors.toString(),
+                modifier = Modifier.padding(4.dp),
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1
+            ) }
 
         val isStartedReading = remember {
             mutableStateOf(false)
