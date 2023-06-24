@@ -54,6 +54,7 @@ import com.bishal.lazyreader.domain.model.MBook
 import com.bishal.lazyreader.navigation.BottomBar
 import com.bishal.lazyreader.presentation.common.LoadingAnimation
 import com.bishal.lazyreader.presentation.common.ReaderAppBar
+import com.bishal.lazyreader.presentation.common.generateRandomColor
 import com.bishal.lazyreader.presentation.screens.home.HomeScreenViewModel
 import com.bishal.lazyreader.presentation.screens.search.shimmerEffect
 import com.bishal.lazyreader.utils.formatDate
@@ -131,6 +132,7 @@ fun ReaderStatsScreen(navController: NavController,
                     .fillMaxWidth()
                     .padding(4.dp),
                     shape = CircleShape,
+                    colors = CardDefaults.cardColors(Color(0xffF3BCC8))
 
                 ) {
                     val readBooksList: List<MBook> = if (!viewModel.data.value.data.isNullOrEmpty()) {
@@ -271,7 +273,8 @@ fun ContentAfterLoading(book: MBook) {
         .height(236.dp)
         .padding(6.dp),
         shape = RoundedCornerShape(29.dp),
-        elevation = CardDefaults.cardElevation(16.dp)
+        elevation = CardDefaults.cardElevation(16.dp),
+        colors = CardDefaults.cardColors(generateRandomColor())
     ) {
         Column(
             modifier = Modifier.width(screenWidth.dp - (spacing * 2)),
@@ -311,7 +314,8 @@ fun ContentAfterLoading(book: MBook) {
                 modifier = Modifier.padding(4.dp),
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = Color.White
             )
 
             Text(
@@ -320,7 +324,8 @@ fun ContentAfterLoading(book: MBook) {
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
+                color = Color.White
             )
 
             Text(text =  "Started: ${formatDate(book.startedReading!!)}",
@@ -328,14 +333,16 @@ fun ContentAfterLoading(book: MBook) {
                 softWrap = true,
                 overflow = TextOverflow.Clip,
                 fontStyle = FontStyle.Italic,
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White
             )
 
             Text(text =  "Finished: ${formatDate(book.finishedReading!!)}",
                 modifier = Modifier.padding(4.dp),
                 overflow = TextOverflow.Clip,
                 fontStyle = FontStyle.Italic,
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White
             )
 
         }

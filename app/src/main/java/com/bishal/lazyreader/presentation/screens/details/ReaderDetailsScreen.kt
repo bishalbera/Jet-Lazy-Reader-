@@ -332,6 +332,12 @@ fun openInExternalBrowserWithBookSearchQuery(
         Toast.makeText(context, "No browser app found", Toast.LENGTH_SHORT).show()
     }
 
+    for (resolvedActivity in resolvedIntentActivities) {
+        val packageName = resolvedActivity.activityInfo.packageName
+        val className = resolvedActivity.activityInfo.name
+        Log.d("tag","Resolved activity: $packageName / $className")
+    }
+
 
 }
 
