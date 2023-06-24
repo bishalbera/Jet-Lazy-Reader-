@@ -4,6 +4,7 @@
 
 package com.bishal.lazyreader.presentation.common
 
+import android.annotation.SuppressLint
 import android.view.MotionEvent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -13,10 +14,12 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -32,6 +35,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -48,6 +52,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -65,6 +70,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -87,7 +93,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.ColorUtils
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.bishal.lazyreader.R
@@ -100,7 +105,6 @@ import com.bishal.lazyreader.ui.theme.BlueViolet3
 import com.bishal.lazyreader.utils.standardQuadFromTo
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
-import java.util.Random
 
 @Composable
 fun EmailInput(
@@ -579,8 +583,8 @@ fun LoadingAnimation(
 
 @Composable
 fun RandomGradientCard(modifier: Modifier, book: Item) {
-    val randomColor = remember { generateRandomColor() }
-    val gradientColors = generateGradientColors(randomColor)
+
+
 
     BoxWithConstraints(
         modifier = Modifier
@@ -705,32 +709,58 @@ fun RandomGradientCard(modifier: Modifier, book: Item) {
     }
 }
 
-fun generateGradientColors(color: Color): List<Color> {
-    val gradientColors = mutableListOf<Color>()
-    gradientColors.add(color)
 
-    val hsv = FloatArray(3)
-    ColorUtils.colorToHSL(color.value.toInt(), hsv)
 
-    val mediumShade = ColorUtils.HSLToColor(hsv)
-    gradientColors.add(Color(mediumShade))
+@SuppressLint("SuspiciousIndentation")
+@Composable
+fun generateRandomColor(): Color {
+  val r = (Math.random() * 128 + 128).toInt()
+  val g = (Math.random() * 128 + 128).toInt()
+  val b = (Math.random() * 128 + 128).toInt()
+    return Color(r,g,b)
 
-    // Generate dark shade by decreasing brightness
-    hsv[2] -= 0.1f
-    val darkShade = ColorUtils.HSLToColor(hsv)
-    gradientColors.add(Color(darkShade))
-
-    // Generate light shade by increasing brightness
-    hsv[2] += 0.2f
-    val lightShade = ColorUtils.HSLToColor(hsv)
-    gradientColors.add(Color(lightShade))
-
-    return gradientColors
 }
 
+@Composable
+fun GlowingCard() {
+    Card(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .then(
+                if (isSystemInDarkTheme()) {
+                    OutlinedCard(
+                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(
+                            1.dp, Color(0xFF374151)
+                        )
+                    ){}
+                } else {
+                    Card(
+                        shape = RoundedCornerShape(8.dp)
+                    ){}
+                }.then(
+                    BoxWithConstraints(
+                        Modifier
+                            .fillMaxSize()
+                            .drawBehind {
+                                val halfWidth = size.width / 2f
+                                val halfHeight = size.height / 2f
+                                drawCircle(
+                                    color = Color(0x33FFFFFF),
+                                    center = Offset(halfWidth, halfHeight),
+                                    radius = (halfWidth * 0.8f).coerceAtLeast(
+                                        halfHeight * 0.8f
+                                    )
+                                )
+                            }
 
-fun generateRandomColor(): Color {
-    val random = Random(System.currentTimeMillis())
-    return Color(random.nextInt(256), random.nextInt(256), random.nextInt(256))
+                    ){
 
+                    }
+                )
+            )
+    ) {
+    }
 }

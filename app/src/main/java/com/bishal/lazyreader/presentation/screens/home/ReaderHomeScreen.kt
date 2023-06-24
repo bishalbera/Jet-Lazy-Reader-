@@ -122,7 +122,7 @@ fun HomeContent(navController: NavController,
 
             Column {
                 if (FirebaseAuth.getInstance().currentUser?.photoUrl != null){
-                    AsyncImage(model = currentUser?.photoUrl,
+                    AsyncImage(model = FirebaseAuth.getInstance().currentUser?.photoUrl,
                         contentDescription = "Profile picture",
                         modifier = Modifier
                             .clickable {
