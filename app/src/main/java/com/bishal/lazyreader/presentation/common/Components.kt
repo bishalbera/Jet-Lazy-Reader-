@@ -14,12 +14,10 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -35,7 +33,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -52,7 +49,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -70,7 +66,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -721,46 +716,5 @@ fun generateRandomColor(): Color {
 
 }
 
-@Composable
-fun GlowingCard() {
-    Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .then(
-                if (isSystemInDarkTheme()) {
-                    OutlinedCard(
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(
-                            1.dp, Color(0xFF374151)
-                        )
-                    ){}
-                } else {
-                    Card(
-                        shape = RoundedCornerShape(8.dp)
-                    ){}
-                }.then(
-                    BoxWithConstraints(
-                        Modifier
-                            .fillMaxSize()
-                            .drawBehind {
-                                val halfWidth = size.width / 2f
-                                val halfHeight = size.height / 2f
-                                drawCircle(
-                                    color = Color(0x33FFFFFF),
-                                    center = Offset(halfWidth, halfHeight),
-                                    radius = (halfWidth * 0.8f).coerceAtLeast(
-                                        halfHeight * 0.8f
-                                    )
-                                )
-                            }
 
-                    ){
 
-                    }
-                )
-            )
-    ) {
-    }
-}
