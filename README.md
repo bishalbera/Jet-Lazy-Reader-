@@ -1,10 +1,12 @@
 <h1 align="center">Lazy Reader</h1>
 
+<p align="center">
+Lazy Reader is a book reader app designed to enhance your reading experience. Our app combines convenience, customization, and cutting-edge technology to provide an immersive and effortless reading experience. We understand that reading is a cherished pastime for many, but with the fast-paced nature of modern life, finding time to sit down and read can be challenging. That's where Lazy Reader comes in. Lazy Reader allows users to search a vast range of books, from classic literature to contemporary bestsellers, all in one convenient app. User's can search for a book, save that in their reading list, write some reviews and give that book a rating. One more thing which makes this app special is user can now download a book with a click using Google. Whether you prefer novels, non-fiction, or self-help books, Lazy Reader has something for everyone.
+</p>
 
-### ***Lazy Reader*** is a book reader app designed to enhance your reading experience. Our app combines convenience, customization, and cutting-edge technology to provide an immersive and effortless reading experience. We understand that reading is a cherished pastime for many, but with the fast-paced nature of modern life, finding time to sit down and read can be challenging. That's where Lazy Reader comes in. Lazy Reader allows users to search a vast range of books, from classic literature to contemporary bestsellers, all in one convenient app. User's can search for a book, save that in their reading list, write some reviews and give that book a rating. One more thing which makes this app special is user can now download a book with a click using Google. Whether you prefer novels, non-fiction, or self-help books, Lazy Reader has something for everyone.
-
-
-![InShot_20230622_214112233](https://github.com/bishalbera/Jet-Lazy-Reader-/assets/123734227/0d9442d5-9b4a-478a-a782-32e5a7366575)
+<p align="center">
+<img src="https://github.com/bishalbera/Jet-Lazy-Reader-/assets/123734227/2ee077b1-d7e6-4568-862f-6914ebb5e8ec" alt="" />
+</p>
 
 
 ### Tech stack & libraries:
